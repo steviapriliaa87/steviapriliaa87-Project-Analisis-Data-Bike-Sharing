@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 
-# Load dataset
-day_data_path = "day_data_bersih.csv"
-hour_data_path = "hour_data_bersih.csv"
+# Load dataset dengan path yang benar
+day_data_path = "data/day_data_bersih.csv"
+hour_data_path = "data/hour_data_bersih.csv"
 
 day_df = pd.read_csv(day_data_path)
 hour_df = pd.read_csv(hour_data_path)
@@ -15,7 +14,7 @@ day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
 
 # Sidebar filters
-st.sidebar.header("📊 Filter Data")
+st.sidebar.header("Filter Data")
 selected_year = st.sidebar.multiselect("Pilih Tahun", day_df['date'].dt.year.unique(), default=day_df['date'].dt.year.unique())
 selected_season = st.sidebar.multiselect("Pilih Musim", day_df['season'].unique(), default=day_df['season'].unique())
 selected_month = st.sidebar.multiselect("Pilih Bulan", day_df['month'].unique(), default=day_df['month'].unique())
@@ -32,56 +31,47 @@ elif selected_day_type == "Libur":
 
 # Main Dashboard
 st.title("🚲 Dashboard Penyewaan Sepeda")
-st.markdown("### Analisis Tren dan Pola Penyewaan Sepeda")
+st.subheader("Ringkasan Statistik")
 
-# Metrics Section
 col1, col2, col3 = st.columns(3)
-col1.metric("📈 Total Penyewaan", df_filtered['total_rentals'].sum())
-col2.metric("📊 Rata-rata Harian", round(df_filtered['total_rentals'].mean(), 2))
-col3.metric("🏆 Penyewaan Tertinggi", df_filtered['total_rentals'].max())
+col1.metric("Total Penyewaan", df_filtered['total_rentals'].sum())
+col2.metric("Rata-rata Harian", round(df_filtered['total_rentals'].mean(), 2))
+col3.metric("Penyewaan Tertinggi", df_filtered['total_rentals'].max())
 
 # Line Chart Tren Penyewaan Sepeda
-st.markdown("---")
-st.subheader("📅 Tren Penyewaan Sepeda Harian")
-fig = px.line(df_filtered, x='date', y='total_rentals', title='Tren Penyewaan Sepeda Harian', 
-              labels={'total_rentals': 'Total Penyewaan'}, color_discrete_sequence=['#00A86B'])
-st.plotly_chart(fig, use_container_width=True)
+st.subheader("Tren Penyewaan Sepeda Harian")
+fig = px.line(df_filtered, x='date', y='total_rentals', title='Tren Penyewaan Sepeda Harian', labels={'total_rentals': 'Total Penyewaan'})
+st.plotly_chart(fig)
 
 # Penyewaan Berdasarkan Musim
-st.subheader("🌦️ Total Penyewaan Berdasarkan Musim")
-fig_season = px.bar(df_filtered.groupby('season')['total_rentals'].sum().reset_index(), x='season', y='total_rentals', 
-                    title='Total Penyewaan per Musim', color='season', color_discrete_sequence=px.colors.qualitative.Pastel)
-st.plotly_chart(fig_season, use_container_width=True)
+st.subheader("Total Penyewaan Berdasarkan Musim")
+fig_season = px.bar(df_filtered.groupby('season')['total_rentals'].sum().reset_index(), x='season', y='total_rentals', title='Total Penyewaan per Musim')
+st.plotly_chart(fig_season)
 
 # Penyewaan Berdasarkan Hari dalam Seminggu
-st.subheader("📅 Penyewaan Berdasarkan Hari dalam Seminggu")
-fig_weekday = px.bar(df_filtered.groupby('one_of_week')['total_rentals'].sum().reset_index(), x='one_of_week', 
-                     y='total_rentals', title="Total Penyewaan per Hari dalam Seminggu", 
-                     color='one_of_week', color_discrete_sequence=px.colors.qualitative.Set2)
-st.plotly_chart(fig_weekday, use_container_width=True)
+st.subheader("Penyewaan Berdasarkan Hari dalam Seminggu")
+fig_weekday = px.bar(day_df.groupby('one_of_week')['total_rentals'].sum().reset_index(), x='one_of_week', y='total_rentals', title="Total Penyewaan per Hari dalam Seminggu")
+st.plotly_chart(fig_weekday)
 
 # Heatmap Penyewaan Sepeda per Jam
-st.subheader("🔥 Heatmap Penyewaan Sepeda per Jam")
+st.subheader("Heatmap Penyewaan Sepeda per Jam")
 heatmap_data = hour_df.groupby(['hour', 'one_of_week'])['total_rentals'].sum().reset_index()
-fig_heatmap = px.density_heatmap(heatmap_data, x='hour', y='one_of_week', z='total_rentals', 
-                                 color_continuous_scale='Viridis', title="Pola Penyewaan per Jam")
-st.plotly_chart(fig_heatmap, use_container_width=True)
+fig_heatmap = px.density_heatmap(heatmap_data, x='hour', y='one_of_week', z='total_rentals', color_continuous_scale='Viridis', title="Pola Penyewaan per Jam")
+st.plotly_chart(fig_heatmap)
 
 # Scatter Plot Penyewaan vs. Suhu Udara
-st.subheader("🌡️ Pengaruh Suhu terhadap Penyewaan")
-fig_scatter = px.scatter(df_filtered, x='temperature', y='total_rentals', color='weather_condition', 
-                         title="Hubungan Suhu dan Penyewaan Sepeda", color_discrete_sequence=px.colors.qualitative.T10)
-st.plotly_chart(fig_scatter, use_container_width=True)
+st.subheader("Pengaruh Suhu terhadap Penyewaan")
+fig_scatter = px.scatter(df_filtered, x='temperature', y='total_rentals', color='weather_condition', title="Hubungan Suhu dan Penyewaan Sepeda")
+st.plotly_chart(fig_scatter)
 
 # Penyewaan Berdasarkan Bulan
-st.subheader("📆 Penyewaan Berdasarkan Bulan")
-fig_month = px.bar(df_filtered.groupby('month')['total_rentals'].sum().reset_index(), x='month', y='total_rentals', 
-                   title='Total Penyewaan per Bulan', color='month', color_discrete_sequence=px.colors.qualitative.Safe)
-st.plotly_chart(fig_month, use_container_width=True)
+st.subheader("Penyewaan Berdasarkan Bulan")
+fig_month = px.bar(df_filtered.groupby('month')['total_rentals'].sum().reset_index(), x='month', y='total_rentals', title='Total Penyewaan per Bulan')
+st.plotly_chart(fig_month)
 
 # Tombol Download Data
 st.sidebar.markdown("---")
-st.sidebar.subheader("⬇️ Download Data")
+st.sidebar.subheader("Download Data")
 st.sidebar.download_button(label="Unduh Data yang Difilter", data=df_filtered.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
 
-st.write("Dashboard ini memberikan wawasan mendalam tentang pola penyewaan sepeda berdasarkan berbagai faktor seperti musim, cuaca, dan waktu.")
+st.write("Dashboard interaktif ini memungkinkan pengguna untuk menganalisis tren penyewaan sepeda berdasarkan musim, cuaca, waktu, dan faktor lainnya.")
