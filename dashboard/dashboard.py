@@ -1,11 +1,18 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
-# Load dataset dengan path yang benar
-day_data_path = "data/day_data_bersih.csv"
-hour_data_path = "data/hour_data_bersih.csv"
+# Pastikan dataset tersedia sebelum dibaca
+data_folder = "data"
+day_data_path = os.path.join(data_folder, "day_data_bersih.csv")
+hour_data_path = os.path.join(data_folder, "hour_data_bersih.csv")
 
+if not os.path.exists(day_data_path) or not os.path.exists(hour_data_path):
+    st.error("File dataset tidak ditemukan. Pastikan file CSV tersedia dalam folder 'data'.")
+    st.stop()
+
+# Load dataset
 day_df = pd.read_csv(day_data_path)
 hour_df = pd.read_csv(hour_data_path)
 
@@ -13,23 +20,31 @@ hour_df = pd.read_csv(hour_data_path)
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
 
+# Konversi tipe data untuk heatmap
+hour_df['hour'] = hour_df['date'].dt.hour
+hour_df['one_of_week'] = hour_df['date'].dt.day_name()
+
 # Sidebar filters
 st.sidebar.header("Filter Data")
 selected_year = st.sidebar.multiselect("Pilih Tahun", day_df['date'].dt.year.unique(), default=day_df['date'].dt.year.unique())
 selected_season = st.sidebar.multiselect("Pilih Musim", day_df['season'].unique(), default=day_df['season'].unique())
 selected_month = st.sidebar.multiselect("Pilih Bulan", day_df['month'].unique(), default=day_df['month'].unique())
 selected_day_type = st.sidebar.radio("Pilih Jenis Hari", ["Semua", "Hari Kerja", "Libur"], index=0)
-selected_temp = st.sidebar.slider("Pilih Rentang Suhu", float(day_df['temperature'].min()), float(day_df['temperature'].max()), (float(day_df['temperature'].min()), float(day_df['temperature'].max())))
 
 # Apply filters
 df_filtered = day_df[(day_df['date'].dt.year.isin(selected_year)) & 
                       (day_df['season'].isin(selected_season)) & 
-                      (day_df['month'].isin(selected_month)) &
-                      (day_df['temperature'].between(selected_temp[0], selected_temp[1]))]
+                      (day_df['month'].isin(selected_month))]
+
 if selected_day_type == "Hari Kerja":
     df_filtered = df_filtered[df_filtered['working_day'] == 1]
 elif selected_day_type == "Libur":
     df_filtered = df_filtered[df_filtered['working_day'] == 0]
+
+# Jika data kosong setelah filter diterapkan, tampilkan pesan
+if df_filtered.empty:
+    st.warning("Tidak ada data yang sesuai dengan filter yang dipilih.")
+    st.stop()
 
 # Main Dashboard
 st.title("🚲 Dashboard Penyewaan Sepeda")
@@ -52,13 +67,13 @@ st.plotly_chart(fig_yearly)
 
 # Heatmap Penyewaan Sepeda per Jam
 st.subheader("Heatmap Penyewaan Sepeda per Jam")
-heatmap_data = hour_df.groupby(['hour', 'one_of_week']).sum()['total_rentals'].reset_index()
+heatmap_data = hour_df.groupby(['hour', 'one_of_week'], as_index=False)['total_rentals'].sum()
 fig_heatmap = px.density_heatmap(heatmap_data, x='hour', y='one_of_week', z='total_rentals', color_continuous_scale='Viridis', title="Pola Penyewaan per Jam")
 st.plotly_chart(fig_heatmap)
 
 # Scatter Plot Faktor Cuaca
-st.subheader("Pengaruh Suhu terhadap Penyewaan")
-fig_scatter = px.scatter(df_filtered, x='temperature', y='total_rentals', color='weather_condition', title="Hubungan Suhu dan Penyewaan Sepeda")
+st.subheader("Pengaruh Cuaca terhadap Penyewaan")
+fig_scatter = px.scatter(df_filtered, x='weather_condition', y='total_rentals', color='weather_condition', title="Pengaruh Cuaca terhadap Penyewaan Sepeda")
 st.plotly_chart(fig_scatter)
 
 # Distribusi Penyewaan Sepeda per Jam
@@ -70,3 +85,10 @@ st.plotly_chart(fig_hist)
 st.subheader("Penyewaan Berdasarkan Hari dalam Seminggu")
 fig_weekday = px.bar(day_df.groupby('one_of_week')['total_rentals'].sum().reset_index(), x='one_of_week', y='total_rentals', title="Total Penyewaan per Hari dalam Seminggu")
 st.plotly_chart(fig_weekday)
+
+# Tombol Download Data
+st.sidebar.markdown("---")
+st.sidebar.subheader("Download Data")
+st.sidebar.download_button(label="Unduh Data yang Difilter", data=df_filtered.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
+
+st.write("Dashboard interaktif ini memungkinkan pengguna untuk menganalisis tren penyewaan sepeda berdasarkan musim, cuaca, waktu, dan faktor lainnya.")
