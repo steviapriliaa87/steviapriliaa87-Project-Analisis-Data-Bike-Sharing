@@ -9,7 +9,7 @@ Repository ini berisi proyek data analysis yang telah dikerjakan dengang menggun
 
 ## Deskripsi
 
-Proyek ini bertujuan untuk menganalisis Bike Sharing Dataset dengan tujuan akhir memperoleh wawasan dan informasi berharga dari hasil analisis data.
+Proyek ini bertujuan untuk menganalisis Bike Sharing Dataset guna mendapatkan wawasan mendalam mengenai pola penggunaan sepeda. Dengan eksplorasi dan visualisasi data, proyek ini diharapkan dapat mengidentifikasi tren, faktor yang memengaruhi jumlah penyewaan sepeda, serta memberikan informasi berharga yang dapat digunakan untuk pengambilan keputusan berbasis data.
 
 ## Struktur Direktori
 
