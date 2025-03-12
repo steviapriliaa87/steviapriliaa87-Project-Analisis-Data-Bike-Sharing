@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import matplotlib.pyplot as plt
 
 # Load dataset dengan path yang benar
 day_data_path = "data/day_data_bersih.csv"
@@ -53,11 +54,24 @@ st.subheader("Penyewaan Berdasarkan Hari dalam Seminggu")
 fig_weekday = px.bar(day_df.groupby('one_of_week')['total_rentals'].sum().reset_index(), x='one_of_week', y='total_rentals', title="Total Penyewaan per Hari dalam Seminggu")
 st.plotly_chart(fig_weekday)
 
-# Heatmap Penyewaan Sepeda per Jam
-st.subheader("Heatmap Penyewaan Sepeda per Jam")
-heatmap_data = hour_df.groupby(['hour', 'one_of_week'])['total_rentals'].sum().reset_index()
-fig_heatmap = px.density_heatmap(heatmap_data, x='hour', y='one_of_week', z='total_rentals', color_continuous_scale='Viridis', title="Pola Penyewaan per Jam")
-st.plotly_chart(fig_heatmap)
+# **Pola Penyewaan Sepeda per Jam (Line Chart dengan Marker)**
+st.subheader("Pola Penyewaan Sepeda per Jam")
+
+# Mengelompokkan data berdasarkan jam dalam sehari
+df_hourly = hour_df.groupby('hour')['total_rentals'].mean().reset_index()
+
+# Plot dengan Matplotlib
+fig, ax = plt.subplots()
+ax.plot(df_hourly['hour'], df_hourly['total_rentals'], marker='o', linestyle='-', color='b')
+
+# Styling plot
+ax.set_title("Rata-rata Penyewaan Sepeda per Jam")
+ax.set_xlabel("Jam dalam Sehari")
+ax.set_ylabel("Rata-rata Jumlah Penyewaan")
+ax.grid(True)
+
+# Tampilkan plot di Streamlit
+st.pyplot(fig)
 
 # Scatter Plot Penyewaan vs. Suhu Udara
 st.subheader("Pengaruh Suhu terhadap Penyewaan")
