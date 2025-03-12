@@ -37,5 +37,5 @@ Proyek ini bertujuan untuk menganalisis Bike Sharing Dataset dengan tujuan akhir
     ```
 
 ## Penggunaan
-1. kunjungi website ini [Dashboard](https://dashboardbikeanalysis.streamlit.app/)
+1. Silahkan klik link berikut : [Dashboard](https://dashboardbikeanalysis.streamlit.app/)
 
