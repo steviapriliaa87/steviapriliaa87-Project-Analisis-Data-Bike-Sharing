@@ -6,8 +6,11 @@ import pandas as pd
 st.title('📊 Dashboard Analisis Data Bike Sharing')
 
 # Load data
-day_df = pd.read_csv('day_data.csv')
-hour_df = pd.read_csv('hour_data.csv')
+import pandas as pd
+
+day_df = pd.read_csv('data/day_data_bersih.csv')
+hour_df = pd.read_csv('data/hour_data_bersih.csv')
+
 
 # Tampilkan data
 st.subheader('Data Harian')
