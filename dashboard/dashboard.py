@@ -57,17 +57,14 @@ st.subheader("Pola Penyewaan Sepeda per Jam")
 # Mengelompokkan data berdasarkan jam dalam sehari
 df_hourly = hour_df.groupby('hour')['total_rentals'].mean().reset_index()
 
-# Plot dengan Matplotlib
 fig, ax = plt.subplots()
 ax.plot(df_hourly['hour'], df_hourly['total_rentals'], marker='o', linestyle='-', color='b')
 
-# Styling plot
 ax.set_title("Rata-rata Penyewaan Sepeda per Jam")
 ax.set_xlabel("Jam dalam Sehari")
 ax.set_ylabel("Rata-rata Jumlah Penyewaan")
 ax.grid(True)
 
-# Tampilkan plot di Streamlit
 st.pyplot(fig)
 
 # Scatter Plot Penyewaan vs. Suhu Udara
