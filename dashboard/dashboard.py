@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Load dataset
-day_data_path = "day_data_bersih.csv"
-hour_data_path = "hour_data_bersih.csv"
+# Load dataset dengan path yang benar
+day_data_path = "data/day_data_bersih.csv"
+hour_data_path = "data/hour_data_bersih.csv"
 
 day_df = pd.read_csv(day_data_path)
 hour_df = pd.read_csv(hour_data_path)
@@ -70,10 +70,3 @@ st.plotly_chart(fig_hist)
 st.subheader("Penyewaan Berdasarkan Hari dalam Seminggu")
 fig_weekday = px.bar(day_df.groupby('one_of_week')['total_rentals'].sum().reset_index(), x='one_of_week', y='total_rentals', title="Total Penyewaan per Hari dalam Seminggu")
 st.plotly_chart(fig_weekday)
-
-# Tombol Download Data
-st.sidebar.markdown("---")
-st.sidebar.subheader("Download Data")
-st.sidebar.download_button(label="Unduh Data yang Difilter", data=df_filtered.to_csv(index=False), file_name="filtered_data.csv", mime="text/csv")
-
-st.write("Dashboard interaktif ini memungkinkan pengguna untuk menganalisis tren penyewaan sepeda berdasarkan musim, cuaca, waktu, dan faktor lainnya.")
