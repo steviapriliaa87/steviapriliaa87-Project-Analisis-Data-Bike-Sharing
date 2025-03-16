@@ -2,51 +2,51 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+
+# Pastikan path file benar
+data_path = "data"
+day_file = os.path.join(data_path, "day_data_bersih.csv")
+hour_file = os.path.join(data_path, "hour_data_bersih.csv")
 
 # Load dataset
-day_df = pd.read_csv("day_data_bersih.csv")
-hour_df = pd.read_csv("hour_data_bersih.csv")
+day_df = pd.read_csv(day_file)
+hour_df = pd.read_csv(hour_file)
 
-# Konfigurasi layout
-st.set_page_config(layout="wide")
-st.title("Dashboard Analisis Penyewaan Sepeda")
+# Dashboard Streamlit
+st.title("Dashboard Analisis Data Bike Sharing")
 
-# Sidebar filter bulan
+# Sidebar untuk eksplorasi data
 st.sidebar.header("Filter Data")
-month_filter = st.sidebar.selectbox("Pilih Bulan:", day_df["month"].unique())
-filtered_data = day_df[day_df["month"] == month_filter]
+selected_season = st.sidebar.selectbox("Pilih Musim:", day_df['season'].unique())
+filtered_data = day_df[day_df['season'] == selected_season]
 
-# Visualisasi 1: Tren Penyewaan Sepeda Bulanan
-st.subheader("Tren Penyewaan Sepeda Bulanan")
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.lineplot(x=day_df["month"], y=day_df["total_rental"], marker="o", ax=ax)
-ax.set_xlabel("Bulan")
-ax.set_ylabel("Total Penyewaan")
-st.pyplot(fig)
+# Visualisasi 1: Jumlah peminjaman sepeda per musim
+st.subheader("Jumlah Peminjaman Sepeda per Musim")
+plt.figure(figsize=(8, 5))
+sns.barplot(x='season', y='count', data=day_df, palette='coolwarm')
+st.pyplot(plt)
 
-# Visualisasi 2: Perbandingan Penyewaan pada Hari Kerja vs Hari Libur
-st.subheader("Perbandingan Penyewaan: Hari Kerja vs Hari Libur")
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.barplot(x=day_df["weekday"], y=day_df["total_rental"], hue=day_df["workingday"], ax=ax)
-ax.set_xlabel("Hari")
-ax.set_ylabel("Total Penyewaan")
-st.pyplot(fig)
+# Visualisasi 2: Tren peminjaman sepeda berdasarkan bulan
+st.subheader("Tren Peminjaman Sepeda per Bulan")
+plt.figure(figsize=(10, 5))
+sns.lineplot(x='month', y='count', data=day_df, marker='o', color='b')
+st.pyplot(plt)
 
-# Visualisasi 3: Distribusi Penyewaan Sepeda berdasarkan Jam dalam Sehari
-st.subheader("Distribusi Penyewaan Sepeda per Jam")
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.lineplot(x=hour_df["hour"], y=hour_df["total_rental"], marker="o", ax=ax)
-ax.set_xlabel("Jam")
-ax.set_ylabel("Total Penyewaan")
-st.pyplot(fig)
+# Visualisasi 3: Pengaruh suhu terhadap peminjaman sepeda
+st.subheader("Pengaruh Suhu terhadap Peminjaman Sepeda")
+plt.figure(figsize=(8, 5))
+sns.scatterplot(x='temp', y='count', data=day_df, alpha=0.6, color='g')
+st.pyplot(plt)
 
-# Visualisasi 4: Perbandingan Penyewa Registered vs Casual
-st.subheader("Perbandingan Penyewa Registered vs Casual")
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.barplot(x=["Registered", "Casual"], y=[day_df["registered"].sum(), day_df["casual"].sum()], ax=ax)
-ax.set_ylabel("Jumlah Penyewa")
-st.pyplot(fig)
+# Visualisasi 4: Distribusi peminjaman sepeda berdasarkan jam
+st.subheader("Distribusi Peminjaman Sepeda per Jam")
+plt.figure(figsize=(10, 5))
+sns.boxplot(x='hour', y='count', data=hour_df, palette='viridis')
+st.pyplot(plt)
 
-# Menampilkan data berdasarkan filter bulan
-st.subheader("Data Penyewaan Berdasarkan Bulan yang Dipilih")
-st.dataframe(filtered_data)
+# Interaktif: Menampilkan data berdasarkan filter
+st.subheader("Data Berdasarkan Filter")
+st.write(filtered_data.head())
+
+st.write("Dashboard ini dibuat untuk menganalisis data peminjaman sepeda berdasarkan musim, bulan, suhu, dan waktu harian.")
