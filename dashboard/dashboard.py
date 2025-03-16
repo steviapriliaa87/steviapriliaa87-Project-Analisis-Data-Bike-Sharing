@@ -4,70 +4,49 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load dataset
-df = pd.read_csv("bike_data.csv")  # Gantilah dengan file yang sesuai
+day_df = pd.read_csv("day_data_bersih.csv")
+hour_df = pd.read_csv("hour_data_bersih.csv")
 
-def plot_rentals_per_month():
-    monthly_data = df.groupby("month")["total_rentals"].sum()
-    plt.figure(figsize=(10, 5))
-    sns.barplot(x=monthly_data.index, y=monthly_data.values, palette="Blues")
-    plt.xlabel("Bulan")
-    plt.ylabel("Total Penyewaan")
-    plt.title("Total Penyewaan Sepeda per Bulan")
-    st.pyplot(plt)
+# Konfigurasi layout
+st.set_page_config(layout="wide")
+st.title("Dashboard Analisis Penyewaan Sepeda")
 
-def plot_rentals_per_day():
-    daily_data = df.groupby("day_of_week")["total_rentals"].sum()
-    plt.figure(figsize=(10, 5))
-    sns.barplot(x=daily_data.index, y=daily_data.values, palette="Greens")
-    plt.xlabel("Hari")
-    plt.ylabel("Total Penyewaan")
-    plt.title("Total Penyewaan Sepeda per Hari")
-    st.pyplot(plt)
-
-def plot_rentals_per_hour():
-    hourly_data = df.groupby("hour")["total_rentals"].sum()
-    plt.figure(figsize=(10, 5))
-    sns.lineplot(x=hourly_data.index, y=hourly_data.values, marker="o", color="red")
-    plt.xlabel("Jam")
-    plt.ylabel("Total Penyewaan")
-    plt.title("Pola Penyewaan Sepeda per Jam")
-    st.pyplot(plt)
-
-def plot_registered_vs_casual():
-    reg_vs_cas = df[["registered", "casual"]].sum()
-    plt.figure(figsize=(6, 6))
-    plt.pie(reg_vs_cas, labels=["Registered", "Casual"], autopct="%1.1f%%", colors=["blue", "orange"])
-    plt.title("Perbandingan Registered vs Casual Users")
-    st.pyplot(plt)
-
-def plot_rentals_by_weather():
-    weather_data = df.groupby("weather")["total_rentals"].sum()
-    plt.figure(figsize=(8, 5))
-    sns.barplot(x=weather_data.index, y=weather_data.values, palette="coolwarm")
-    plt.xlabel("Kondisi Cuaca")
-    plt.ylabel("Total Penyewaan")
-    plt.title("Total Penyewaan Sepeda berdasarkan Cuaca")
-    st.pyplot(plt)
-
-# Streamlit UI
-st.title("Dashboard Penyewaan Sepeda")
-st.sidebar.header("Pilihan Visualisasi")
-option = st.sidebar.selectbox("Pilih Grafik:", 
-    ["Penyewaan per Bulan", "Penyewaan per Hari", "Penyewaan per Jam", "Registered vs Casual", "Penyewaan berdasarkan Cuaca"])
-
-if option == "Penyewaan per Bulan":
-    plot_rentals_per_month()
-elif option == "Penyewaan per Hari":
-    plot_rentals_per_day()
-elif option == "Penyewaan per Jam":
-    plot_rentals_per_hour()
-elif option == "Registered vs Casual":
-    plot_registered_vs_casual()
-elif option == "Penyewaan berdasarkan Cuaca":
-    plot_rentals_by_weather()
-
+# Sidebar filter bulan
 st.sidebar.header("Filter Data")
-season = st.sidebar.selectbox("Pilih Musim:", df["season"].unique())
-filtered_data = df[df["season"] == season]
-st.write(f"Menampilkan data untuk musim: {season}")
+month_filter = st.sidebar.selectbox("Pilih Bulan:", day_df["month"].unique())
+filtered_data = day_df[day_df["month"] == month_filter]
+
+# Visualisasi 1: Tren Penyewaan Sepeda Bulanan
+st.subheader("Tren Penyewaan Sepeda Bulanan")
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.lineplot(x=day_df["month"], y=day_df["total_rental"], marker="o", ax=ax)
+ax.set_xlabel("Bulan")
+ax.set_ylabel("Total Penyewaan")
+st.pyplot(fig)
+
+# Visualisasi 2: Perbandingan Penyewaan pada Hari Kerja vs Hari Libur
+st.subheader("Perbandingan Penyewaan: Hari Kerja vs Hari Libur")
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.barplot(x=day_df["weekday"], y=day_df["total_rental"], hue=day_df["workingday"], ax=ax)
+ax.set_xlabel("Hari")
+ax.set_ylabel("Total Penyewaan")
+st.pyplot(fig)
+
+# Visualisasi 3: Distribusi Penyewaan Sepeda berdasarkan Jam dalam Sehari
+st.subheader("Distribusi Penyewaan Sepeda per Jam")
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.lineplot(x=hour_df["hour"], y=hour_df["total_rental"], marker="o", ax=ax)
+ax.set_xlabel("Jam")
+ax.set_ylabel("Total Penyewaan")
+st.pyplot(fig)
+
+# Visualisasi 4: Perbandingan Penyewa Registered vs Casual
+st.subheader("Perbandingan Penyewa Registered vs Casual")
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.barplot(x=["Registered", "Casual"], y=[day_df["registered"].sum(), day_df["casual"].sum()], ax=ax)
+ax.set_ylabel("Jumlah Penyewa")
+st.pyplot(fig)
+
+# Menampilkan data berdasarkan filter bulan
+st.subheader("Data Penyewaan Berdasarkan Bulan yang Dipilih")
 st.dataframe(filtered_data)
