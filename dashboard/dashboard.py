@@ -115,3 +115,35 @@ ax.set_xlabel("Jenis Hari", fontsize=12)
 ax.set_ylabel("Total Penyewaan Sepeda", fontsize=12)
 ax.grid(axis="y", linestyle="--", alpha=0.6)
 st.pyplot(fig)
+
+# 7 
+monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
+
+# Buat figure dan axis untuk plotting
+fig, ax = plt.subplots(figsize=(8, 5))
+
+# Plot tren penyewaan sepeda untuk 2011
+ax.plot(
+    monthly_trend[monthly_trend["year"] == 2011]["month"],
+    monthly_trend[monthly_trend["year"] == 2011]["total_rentals"],
+    marker="o", linestyle="-", color="blue", label="2011"
+)
+
+# Plot tren penyewaan sepeda untuk 2012
+ax.plot(
+    monthly_trend[monthly_trend["year"] == 2012]["month"],
+    monthly_trend[monthly_trend["year"] == 2012]["total_rentals"],
+    marker="s", linestyle="-", color="red", label="2012"
+)
+
+# Atur judul dan label
+ax.set_title("Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012", fontsize=14, fontweight="bold")
+ax.set_xlabel("Bulan", fontsize=12)
+ax.set_ylabel("Total Penyewaan Sepeda", fontsize=12)
+ax.set_xticks(range(1, 13))
+ax.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"])
+ax.legend(title="Tahun")
+ax.grid(axis="y", linestyle="--", alpha=0.6)
+
+# Tampilkan plot di Streamlit
+st.pyplot(fig)
