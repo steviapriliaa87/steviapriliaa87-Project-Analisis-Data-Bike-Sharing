@@ -117,39 +117,40 @@ ax.grid(axis="y", linestyle="--", alpha=0.6)
 st.pyplot(fig)
 
 # 7 
-# Contoh data: pastikan day_df sudah terdefinisi dengan benar
+month_order = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+day_df["month"] = pd.Categorical(day_df["month"], categories=month_order, ordered=True)
+
+# Hitung total penyewaan per bulan dan tahun
 monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
+monthly_trend = monthly_trend.sort_values(by=["year", "month"])  # Urutkan agar tidak acak
 
-# Urutkan data berdasarkan tahun dan bulan agar grafik tidak acak
-monthly_trend = monthly_trend.sort_values(by=["year", "month"])
-
-# Buat figure
+# Buat figure dan axis
 fig, ax = plt.subplots(figsize=(8, 5))
 
-# Plot untuk tahun 2011
+# Plot tahun 2011
 ax.plot(
     monthly_trend[monthly_trend["year"] == 2011]["month"],
     monthly_trend[monthly_trend["year"] == 2011]["total_rentals"],
     marker="o", linestyle="-", color="blue", markersize=6, linewidth=2, label="2011"
 )
 
-# Plot untuk tahun 2012
+# Plot tahun 2012
 ax.plot(
     monthly_trend[monthly_trend["year"] == 2012]["month"],
     monthly_trend[monthly_trend["year"] == 2012]["total_rentals"],
     marker="s", linestyle="-", color="red", markersize=6, linewidth=2, label="2012"
 )
 
-# Atur tampilan grafik
+# Atur tampilan
 ax.set_title("Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012", fontsize=14, fontweight="bold")
 ax.set_xlabel("Bulan", fontsize=12)
 ax.set_ylabel("Total Penyewaan Sepeda", fontsize=12)
-ax.set_xticks(range(1, 13))
-ax.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"])
-ax.legend(title="Tahun", fontsize=10, frameon=True, loc="upper left")  # Legend lebih rapi
+ax.set_xticks(range(len(month_order)))  # Pastikan jumlah xticks sesuai jumlah bulan
+ax.set_xticklabels(month_order)  # Pakai nama bulan
+ax.legend(title="Tahun", fontsize=10, frameon=True, loc="upper left")
 ax.grid(axis="y", linestyle="--", alpha=0.3)
 
-plt.tight_layout()  # Pastikan semua elemen terlihat dengan baik
+plt.tight_layout()
 
 # Tampilkan di Streamlit
 st.pyplot(fig)
