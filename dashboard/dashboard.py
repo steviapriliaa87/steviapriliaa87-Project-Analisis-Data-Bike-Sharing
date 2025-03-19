@@ -105,11 +105,11 @@ st.pyplot(fig)
 
 # 6. Perbandingan total penyewa antara hari kerja vs hari libur
 st.subheader("Perbandingan Total Penyewaan antara Hari Kerja vs Hari Libur")
-rentals_by_day_type = day_df.groupby("workingday", as_index=False)["total_rentals"].sum()
-rentals_by_day_type["workingday"] = rentals_by_day_type["workingday"].map({0: "Hari Libur", 1: "Hari Kerja"})
+rentals_by_day_type = day_df.groupby("working_day", as_index=False)["total_rentals"].sum()
+rentals_by_day_type["working_day"] = rentals_by_day_type["working_day"].map({0: "Hari Libur", 1: "Hari Kerja"})
 
 fig, ax = plt.subplots(figsize=(8, 5))
-sns.barplot(data=rentals_by_day_type, x="workingday", y="total_rentals", palette={"Hari Libur": "red", "Hari Kerja": "blue"}, ax=ax)
+sns.barplot(data=rentals_by_day_type, x="working_day", y="total_rentals", palette={"Hari Libur": "red", "Hari Kerja": "blue"}, ax=ax)
 ax.set_title("Perbandingan Total Penyewaan antara Hari Kerja vs Hari Libur", fontsize=14, fontweight="bold")
 ax.set_xlabel("Jenis Hari", fontsize=12)
 ax.set_ylabel("Total Penyewaan Sepeda", fontsize=12)
