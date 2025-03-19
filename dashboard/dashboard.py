@@ -3,11 +3,10 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 
-# Path file CSV yang benar
 day_data_path = "../data/day.csv"
 hour_data_path = "../data/hour.csv"
 
-# Membaca file CSV
+# Coba baca file
 day_df = pd.read_csv(day_data_path)
 hour_df = pd.read_csv(hour_data_path)
 
