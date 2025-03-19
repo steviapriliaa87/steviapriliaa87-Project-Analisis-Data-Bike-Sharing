@@ -126,6 +126,14 @@ day_df["month"] = pd.Categorical(day_df["month"], categories=month_order, ordere
 # Hitung total penyewaan per bulan dan tahun
 monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
 
+# 🚀 Pastikan semua bulan ada dengan `reindex`
+monthly_trend = (
+    monthly_trend.set_index(["year", "month"])
+    .reindex(pd.MultiIndex.from_product([[2011, 2012], month_order], names=["year", "month"]))
+    .fillna(0)
+    .reset_index()
+)
+
 # Urutkan data dengan benar
 monthly_trend = monthly_trend.sort_values(by=["year", "month"])
 
