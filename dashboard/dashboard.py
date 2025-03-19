@@ -13,6 +13,22 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 day_data_path = os.path.join(script_dir, "day.csv")
 hour_data_path = os.path.join(script_dir, "hour.csv")
 
+# 🔍 Debugging: Cek apakah path-nya benar
+st.write(f"Path ke day.csv: {day_data_path}")
+st.write(f"Path ke hour.csv: {hour_data_path}")
+
+# Coba baca file
+try:
+    day_df = pd.read_csv(day_data_path)
+    hour_df = pd.read_csv(hour_data_path)
+    st.write("✅ File berhasil dibaca!")
+except FileNotFoundError:
+    st.error("❌ File tidak ditemukan! Cek kembali lokasi file di dalam repository GitHub.")
+
+# Konversi kolom date ke datetime
+day_df['date'] = pd.to_datetime(day_df['date'])
+hour_df['date'] = pd.to_datetime(hour_df['date'])
+
 # Sidebar filters
 st.sidebar.header("Filter Data")
 selected_year = st.sidebar.multiselect("Pilih Tahun", day_df['date'].dt.year.unique(), default=day_df['date'].dt.year.unique())
@@ -110,7 +126,7 @@ day_df["month"] = pd.Categorical(day_df["month"], categories=month_order, ordere
 # Hitung total penyewaan per bulan dan tahun
 monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
 
-# 🚀 Pastikan semua bulan ada dengan `reindex`
+# 🚀 Pastikan semua bulan ada dengan reindex
 monthly_trend = (
     monthly_trend.set_index(["year", "month"])
     .reindex(pd.MultiIndex.from_product([[2011, 2012], month_order], names=["year", "month"]))
