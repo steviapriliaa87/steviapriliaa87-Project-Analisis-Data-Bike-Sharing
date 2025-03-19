@@ -117,7 +117,7 @@ ax.grid(axis="y", linestyle="--", alpha=0.6)
 st.pyplot(fig)
 
 # 7 
-# Urutan nama bulan yang benar
+# Urutan bulan agar selalu benar
 month_order = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
 
 # Konversi kolom month menjadi kategori dengan urutan yang benar
@@ -129,8 +129,8 @@ monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"
 # Urutkan data dengan benar
 monthly_trend = monthly_trend.sort_values(by=["year", "month"])
 
-# Buat figure
-fig, ax = plt.subplots(figsize=(8, 5))
+# Buat figure dengan ukuran lebih besar
+fig, ax = plt.subplots(figsize=(10, 5))  # Ukuran diperbesar agar jelas
 
 # Plot untuk tahun 2011
 ax.plot(
@@ -150,8 +150,8 @@ ax.plot(
 ax.set_title("Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012", fontsize=14, fontweight="bold")
 ax.set_xlabel("Bulan", fontsize=12)
 ax.set_ylabel("Total Penyewaan Sepeda", fontsize=12)
-ax.set_xticks(range(len(month_order)))  # Pastikan jumlah xticks sesuai jumlah bulan
-ax.set_xticklabels(month_order)  # Gunakan nama bulan
+ax.set_xticks(range(len(month_order)))
+ax.set_xticklabels(month_order)
 ax.legend(title="Tahun", fontsize=10, frameon=True, loc="upper left")
 ax.grid(axis="y", linestyle="--", alpha=0.3)
 
