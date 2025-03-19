@@ -117,40 +117,39 @@ ax.grid(axis="y", linestyle="--", alpha=0.6)
 st.pyplot(fig)
 
 # 7 
-# Contoh data (gunakan data asli yang kamu punya)
-# Pastikan day_df sudah terdefinisi sebelumnya
+# Contoh data: pastikan day_df sudah terdefinisi dengan benar
 monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
 
-# Urutkan berdasarkan tahun dan bulan untuk menghindari grafik acak
+# Urutkan data berdasarkan tahun dan bulan agar grafik tidak acak
 monthly_trend = monthly_trend.sort_values(by=["year", "month"])
 
-# Buat figure untuk plotting
+# Buat figure
 fig, ax = plt.subplots(figsize=(8, 5))
 
-# Plot tahun 2011
+# Plot untuk tahun 2011
 ax.plot(
     monthly_trend[monthly_trend["year"] == 2011]["month"],
     monthly_trend[monthly_trend["year"] == 2011]["total_rentals"],
     marker="o", linestyle="-", color="blue", markersize=6, linewidth=2, label="2011"
 )
 
-# Plot tahun 2012
+# Plot untuk tahun 2012
 ax.plot(
     monthly_trend[monthly_trend["year"] == 2012]["month"],
     monthly_trend[monthly_trend["year"] == 2012]["total_rentals"],
     marker="s", linestyle="-", color="red", markersize=6, linewidth=2, label="2012"
 )
 
-# Atur label dan title
+# Atur tampilan grafik
 ax.set_title("Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012", fontsize=14, fontweight="bold")
 ax.set_xlabel("Bulan", fontsize=12)
 ax.set_ylabel("Total Penyewaan Sepeda", fontsize=12)
 ax.set_xticks(range(1, 13))
 ax.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"])
-ax.legend(title="Tahun", loc="upper left", fontsize=10, frameon=True)  # Legend lebih rapi
+ax.legend(title="Tahun", fontsize=10, frameon=True, loc="upper left")  # Legend lebih rapi
 ax.grid(axis="y", linestyle="--", alpha=0.3)
 
-plt.tight_layout()  # Hindari elemen kepotong
+plt.tight_layout()  # Pastikan semua elemen terlihat dengan baik
 
 # Tampilkan di Streamlit
 st.pyplot(fig)
