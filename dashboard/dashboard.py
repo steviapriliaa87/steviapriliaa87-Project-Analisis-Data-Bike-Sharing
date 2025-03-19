@@ -4,8 +4,8 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 
 # Load dataset
-day_data_path = "data/day_data_bersih.csv"
-hour_data_path = "data/hour_data_bersih.csv"
+day_data_path = "data/day.csv"
+hour_data_path = "data/hour.csv"
 
 day_df = pd.read_csv(day_data_path)
 hour_df = pd.read_csv(hour_data_path)
@@ -30,36 +30,166 @@ elif selected_day_type == "Libur":
 st.title("Dashboard Penyewaan Sepeda")
 
 # 1. Rata-rata penyewaan berdasarkan jam
-hourly_avg = hour_df.groupby('hour')['count'].mean().reset_index()
-fig1 = px.line(hourly_avg, x='hour', y='count', title="Rata-rata Penyewaan Sepeda per Jam")
-st.plotly_chart(fig1)
+rentals_by_hour = hour_df.groupby("hour", observed=True, as_index=False)["total_rentals"].mean()
+print("Tabel Rata-rata Penyewaan Sepeda per Jam:")
+display(rentals_by_hour)
+
+plt.figure(figsize=(12, 6))
+sns.lineplot(
+    data=rentals_by_hour,
+    x="hour",
+    y="total_rentals",
+    marker="o",
+    color="blue",
+    linewidth=2
+)
+
+plt.title("Distribusi Rata-rata Penyewaan Sepeda per Jam", fontsize=14, fontweight="bold")
+plt.xlabel("Jam", fontsize=12)
+plt.ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+plt.xticks(range(0, 24))
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+plt.show()
 
 # 2. Rata-rata penyewaan sepeda berdasarkan bulan
-monthly_avg = day_df.groupby('month')['count'].mean().reset_index()
-fig2 = px.bar(monthly_avg, x='month', y='count', title="Rata-rata Penyewaan Sepeda per Bulan")
-st.plotly_chart(fig2)
+avg_rentals_by_month = day_df.groupby("month", observed=True)["total_rentals"].mean().reset_index()
+month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+avg_rentals_by_month["month"] = pd.Categorical(avg_rentals_by_month["month"], categories=month_order, ordered=True)
+avg_rentals_by_month = avg_rentals_by_month.sort_values("month")
+
+print("Tabel Rata-rata Penyewaan Sepeda Berdasarkan Bulan:")
+display(avg_rentals_by_month)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(
+    data=avg_rentals_by_month,
+    y="month",
+    x="total_rentals",
+    color="seagreen",
+    orient="h"
+)
+
+plt.title("Rata-rata Penyewaan Sepeda Berdasarkan Bulan", fontsize=14, fontweight="bold")
+plt.ylabel("Bulan", fontsize=12)
+plt.xlabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+plt.grid(axis="x", linestyle="--", alpha=0.6)
+plt.show()
 
 # 3. Rata-rata penyewaan berdasarkan hari dalam seminggu
-day_avg = day_df.groupby('weekday')['count'].mean().reset_index()
-fig3 = px.bar(day_avg, x='weekday', y='count', title="Rata-rata Penyewaan Sepeda per Hari dalam Seminggu")
-st.plotly_chart(fig3)
+avg_rentals_by_weekday = (
+    day_df.groupby("one_of_week", observed=False)["total_rentals"]
+    .mean()
+    .reset_index()
+)
+
+order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
+    avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True
+)
+avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
+print("Tabel Rata-rata Penyewaan Sepeda dalam Seminggu:")
+display(avg_rentals_by_weekday)
+
+plt.figure(figsize=(10, 5))
+sns.barplot(
+    data=avg_rentals_by_weekday,
+    x="one_of_week",
+    y="total_rentals",
+    color="seagreen",
+)
+plt.title("Rata-rata Penyewaan Sepeda dalam Seminggu", fontsize=14, fontweight="bold")
+plt.xlabel("Hari", fontsize=12)
+plt.ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+plt.xticks(rotation=45)
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+plt.show()
 
 # 4. Rata-rata penyewaan berdasarkan cuaca
-weather_avg = day_df.groupby('weather')['count'].mean().reset_index()
-fig4 = px.bar(weather_avg, x='weather', y='count', title="Rata-rata Penyewaan Sepeda berdasarkan Cuaca")
-st.plotly_chart(fig4)
+avg_rentals_by_weather = hour_df.groupby('weather_condition', observed=True)['total_rentals'].mean().reset_index()
+print(avg_rentals_by_weather)
+
+palette = sns.color_palette("coolwarm", n_colors=len(avg_rentals_by_weather))
+plt.figure(figsize=(8, 5))
+ax = sns.barplot(
+    data=avg_rentals_by_weather,
+    x="weather_condition",
+    y="total_rentals",
+    hue="weather_condition",
+    palette=palette,
+    legend=False
+)
+
+ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f'{int(x):,}'))
+plt.title("Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca", fontsize=14, fontweight="bold")
+plt.xlabel("Kondisi Cuaca", fontsize=12)
+plt.ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+plt.xticks(rotation=30)
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+plt.show()
 
 # 5. Perbandingan Penyewa Registered vs Casual
-fig5 = px.bar(day_df, x='date', y=['casual', 'registered'], title="Perbandingan Penyewa Registered vs Casual", barmode='stack')
-st.plotly_chart(fig5)
+plt.rcParams['font.family'] = 'DejaVu Sans'
+total_registered = hour_df['registered_rentals'].sum()
+total_casual = hour_df['casual_rentals'].sum()
+labels = [f'Registered ({total_registered})', f'Casual ({total_casual})']
+sizes = [total_registered, total_casual]
+colors = ['darkblue', 'lightblue']
+
+plt.figure(figsize=(6, 6))
+plt.pie(sizes, labels=labels, autopct='%1.1f%%', colors=colors, startangle=90, wedgeprops={'edgecolor': 'white'})
+plt.title('Perbandingan Penyewa Registered vs Casual')
+plt.show()
 
 # 6. Perbandingan total penyewa antara hari kerja vs hari libur
-workday_avg = day_df.groupby('workingday')['count'].mean().reset_index()
-workday_avg['workingday'] = workday_avg['workingday'].map({1: 'Hari Kerja', 0: 'Hari Libur'})
-fig6 = px.bar(workday_avg, x='workingday', y='count', title="Perbandingan Total Penyewa: Hari Kerja vs Hari Libur")
-st.plotly_chart(fig6)
+rentals_by_day_type = day_df.groupby("working_day", observed=True)["total_rentals"].sum().reset_index()
+rentals_by_day_type["working_day"] = rentals_by_day_type["working_day"].map({0: "Hari Libur", 1: "Hari Kerja"})
+
+color_mapping = {"Hari Libur": "red", "Hari Kerja": "blue"}
+
+plt.figure(figsize=(8, 5))
+ax = sns.barplot(
+    data=rentals_by_day_type,
+    x="working_day",
+    y="total_rentals",
+    hue="working_day",
+    palette=color_mapping,
+    legend=False
+)
+
+for p in ax.patches:
+    ax.annotate(f'{int(p.get_height()):,}',
+                (p.get_x() + p.get_width() / 2., p.get_height()),
+                ha='center', va='bottom', fontsize=12, fontweight='bold', color='black')
+
+ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f"{int(x):,}"))
+
+plt.title("Perbandingan Total Penyewaan antara Hari Kerja vs Hari Libur", fontsize=14, fontweight="bold")
+plt.xlabel("Jenis Hari", fontsize=12)
+plt.ylabel("Total Penyewaan Sepeda", fontsize=12)
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+
+plt.show()
 
 # 7. Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012
-yearly_trend = day_df.groupby([day_df['date'].dt.year, 'month'])['count'].sum().reset_index()
-fig7 = px.line(yearly_trend, x='month', y='count', color='date', title="Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012")
-st.plotly_chart(fig7)
+monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
+
+plt.figure(figsize=(8, 5))
+plt.plot(
+    monthly_trend[monthly_trend["year"] == 2011]["month"],
+    monthly_trend[monthly_trend["year"] == 2011]["total_rentals"],
+    marker="o", linestyle="-", color="blue", label="2011"
+)
+
+plt.plot(
+    monthly_trend[monthly_trend["year"] == 2012]["month"],
+    monthly_trend[monthly_trend["year"] == 2012]["total_rentals"],
+    marker="s", linestyle="-", color="red", label="2012"
+)
+
+plt.title("Perbandingan Tren Penyewaan Sepeda: 2011 vs 2012", fontsize=14, fontweight="bold")
+plt.xlabel("Bulan", fontsize=12)
+plt.ylabel("Total Penyewaan Sepeda", fontsize=12)
+plt.xticks(range(1, 13), ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"])
+plt.legend(title="Tahun")
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+plt.show()
