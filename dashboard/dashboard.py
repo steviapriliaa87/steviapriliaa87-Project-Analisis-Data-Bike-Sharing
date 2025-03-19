@@ -1,13 +1,10 @@
+import os
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.ticker as mticker
-
-import os
-import pandas as pd
-import streamlit as st
 
 # Mendapatkan path absolut ke folder 'dashboard'
 script_dir = os.path.dirname(os.path.abspath(__file__))
