@@ -3,12 +3,8 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 
-day_data_path = "../data/day.csv"
-hour_data_path = "../data/hour.csv"
-
-# Coba baca file
-day_df = pd.read_csv(day_data_path)
-hour_df = pd.read_csv(hour_data_path)
+day_data_path = "day.csv"
+hour_data_path = "hour.csv"
 
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
