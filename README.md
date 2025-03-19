@@ -37,24 +37,26 @@ Proyek ini bertujuan untuk menganalisis *Bike Sharing Dataset* guna mendapatkan 
 
    ```bash
    git clone https://github.com/steviapriliaa87/Project-Analisis-Data-Bike-Sharing.git
+   ```
 
-2. **Setup Virtual Environment** (disarankan untuk menjaga isolasi library) :
+2. **Setup Virtual Environment** (disarankan untuk menjaga isolasi library):
 
    ```bash
-    # Membuat virtual environment
-    python -m venv env
+   # Membuat virtual environment
+   python -m venv env
 
    # Mengaktifkan virtual environment
    # Windows
    .\env\Scripts\activate
    # Mac/Linux
    source env/bin/activate
-   source env/bin/activate
+   ```
 
-3. **Install library** yang dibutuhkan menggunakan requirements.txt:
+3. **Install library** yang dibutuhkan menggunakan `requirements.txt`:
 
    ```bash
    pip install -r requirements.txt
+   ```
 
 ---
 
@@ -62,11 +64,23 @@ Proyek ini bertujuan untuk menganalisis *Bike Sharing Dataset* guna mendapatkan 
 
 Untuk melihat visualisasi interaktif dari hasil analisis data:
 
-1. Pastikan Anda sudah berada di direktori utama proyek.
+1. Pastikan Anda sudah berada di direktori utama proyek setelah clone repository.
+2. Pastikan folder `data/` tetap berada di lokasi yang sama seperti saat di-clone.
+3. Jalankan Streamlit:
 
-2. Jalankan Streamlit:
    ```bash
    streamlit run dashboard/dashboard.py
+   ```
+
+📌 **Catatan:**
+Pastikan file `dashboard.py` menggunakan path relatif yang benar agar dataset bisa diakses:
+
+```python
+import pandas as pd
+
+data_day = pd.read_csv("../data/day_data_bersih.csv")
+data_hour = pd.read_csv("../data/hour_data_bersih.csv")
+```
 
 ---
 
@@ -76,7 +90,31 @@ Jika ingin langsung melihat hasil akhirnya, bisa kunjungi [Dashboard Penyewaan S
 
 ---
 
-## ❓ Bantuan
+## 🔍 Troubleshooting
+Jika dashboard mengalami error karena file data tidak ditemukan, periksa kembali struktur folder:
+
+```
+/project-root
+│── dashboard/
+│   ├── dashboard.py
+│── data/
+│   ├── day_data_bersih.csv
+│   ├── hour_data_bersih.csv
+```
+
+**Solusi:**
+- ✅ Pastikan file CSV berada di dalam folder `data/`, bukan di folder lain.
+- ✅ Periksa apakah path relatif di `dashboard.py` sudah sesuai (`../data/nama_file.csv`).
+- ✅ Jika error tetap terjadi, coba jalankan perintah berikut untuk melihat isi folder:
+
+   ```bash
+   ls -R  # Untuk Linux/Mac
+   dir /s # Untuk Windows
+   ```
+
+---
+
+##❓ Bantuan
 Jika Anda memiliki pertanyaan, saran, atau menemukan masalah, silakan ajukan melalui GitHub Issues.
 
 ---
