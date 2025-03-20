@@ -88,27 +88,18 @@ fig.update_traces(textinfo="none", hoverinfo="label+percent+value")
 st.plotly_chart(fig, use_container_width=True)
 
 # 6. Penyewaan Sepeda Berdasarkan Tahun
-# 6. Penyewaan Sepeda Berdasarkan Tahun
 st.subheader("Perbandingan Tren Penyewaan Sepeda Berdasarkan Tahun")
-
-# Gunakan dataset yang sudah difilter dari sidebar
 monthly_trend = df_filtered.groupby(["year", "month"])["total_rentals"].sum().reset_index()
-
-# Pastikan urutan bulan benar
 monthly_trend["month"] = pd.Categorical(
     monthly_trend["month"], 
     categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
     ordered=True
 )
 monthly_trend = monthly_trend.sort_values(by=["year", "month"])
-
-# Buat Visualisasi
 fig = px.line(
     monthly_trend, x="month", y="total_rentals", color="year", 
     markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"},
     title="Tren Penyewaan Sepeda per Bulan"
 )
-
-# Tampilkan Grafik di Streamlit
 st.plotly_chart(fig, use_container_width=True)
 
