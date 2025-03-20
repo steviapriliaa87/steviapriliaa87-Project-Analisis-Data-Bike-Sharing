@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.ticker as ticker
 
 # Membaca dataset
 day_df = pd.read_csv("dashboard/day.csv")
@@ -78,8 +79,28 @@ fig = px.bar(
     x="one_of_week", 
     y="total_rentals",  
     labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"},
-    color_discrete_sequence=["royalblue"],  # Warna batang
+    color_discrete_sequence=["royalblue"], 
     hover_data={"total_rentals": ":,.0f", "one_of_week": True}
 )
 st.plotly_chart(fig)
+
+#4.Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca
+avg_rentals_by_weather = hour_df.groupby('weather_condition', observed=True)['total_rentals'].mean().reset_index()
+palette = sns.color_palette("coolwarm", n_colors=len(avg_rentals_by_weather))
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.barplot(
+    data=avg_rentals_by_weather,
+    x="weather_condition",
+    y="total_rentals",
+    palette=palette,
+    ax=ax
+)
+ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{int(x):,}'))
+ax.set_title("Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca", fontsize=14, fontweight="bold")
+ax.set_xlabel("Kondisi Cuaca", fontsize=12)
+ax.set_ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+ax.set_xticklabels(avg_rentals_by_weather["weather_condition"], rotation=30)
+ax.grid(axis="y", linestyle="--", alpha=0.6)
+st.pyplot(fig)
+
 
