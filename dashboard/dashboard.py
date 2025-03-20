@@ -4,13 +4,12 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.ticker as ticker
-
-# Dapatkan path absolut folder tempat script dashboard.py berada
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Dapatkan path direktori tempat script sedang dijalankan
+BASE_DIR = Path(__file__).resolve().parent
 
 # Gabungkan dengan nama file dataset
-day_csv_path = os.path.join(BASE_DIR, "day.csv")
-hour_csv_path = os.path.join(BASE_DIR, "hour.csv")
+day_csv_path = BASE_DIR / "day.csv"
+hour_csv_path = BASE_DIR / "hour.csv"
 
 # Baca dataset
 day_df = pd.read_csv(day_csv_path)
