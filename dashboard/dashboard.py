@@ -37,7 +37,7 @@ col3.metric("Penyewaan Tertinggi", df_filtered['total_rentals'].max())
 # 1. Penyewaan Sepeda berdasarkan Hari
 st.subheader("Rata-rata Penyewaan Sepeda per Jam")
 # Mengelompokkan data berdasarkan jam dan menghitung rata-rata penyewaan
-hourly_rentals = df_filtered.groupby("hour")["total_rentals"].mean().reset_index()
+hourly_rentals = hour_df.groupby("hour")["total_rentals"].mean().reset_index()
 # Membuat line plot menggunakan Plotly Express
 fig = px.line(hourly_rentals, x='hour', y='total_rentals', 
               title='Rata-rata Penyewaan Sepeda per Jam', 
