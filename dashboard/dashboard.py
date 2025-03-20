@@ -46,6 +46,10 @@ st.plotly_chart(fig)
 
 
 #2.Penyewaan Berdasarkan bulan
+
+
+
+#3.Penyewaan Berdasarkan Hari
 # **Grouping data berdasarkan hari dalam seminggu**
 avg_rentals_by_weekday = (
     day_df.groupby("one_of_week")["total_rentals"]
@@ -60,12 +64,11 @@ avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
 )
 avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
 
-# **Buat visualisasi dengan Plotly**
+# **Buat visualisasi dengan Plotly (VERTIKAL)**
 fig = px.bar(
     avg_rentals_by_weekday, 
-    x="total_rentals", 
-    y="one_of_week", 
-    orientation="h",  # Horizontal bar
+    x="one_of_week",  # X-axis: Hari
+    y="total_rentals",  # Y-axis: Rata-rata Penyewaan
     title="Rata-rata Penyewaan Sepeda dalam Seminggu",
     labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"},
     color_discrete_sequence=["royalblue"],  # Warna batang
