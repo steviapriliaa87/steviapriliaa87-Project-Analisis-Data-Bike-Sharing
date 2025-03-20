@@ -7,13 +7,11 @@ import matplotlib.ticker as ticker
 # Dapatkan path direktori tempat script sedang dijalankan
 BASE_DIR = Path(__file__).resolve().parent
 
-# Gabungkan dengan nama file dataset
-day_csv_path = BASE_DIR / "day.csv"
-hour_csv_path = BASE_DIR / "hour.csv"
-
-# Baca dataset
-day_df = pd.read_csv(day_csv_path)
-hour_df = pd.read_csv(hour_csv_path)
+# Membaca dataset
+ day_df = pd.read_csv("day.csv")
+ hour_df = pd.read_csv("hour.csv")
+ day_df = pd.read_csv("dashboard/day.csv")
+ hour_df = pd.read_csv("dashboard/hour.csv")
 
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
