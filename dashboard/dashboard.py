@@ -88,21 +88,18 @@ fig.update_traces(textinfo="none", hoverinfo="label+percent+value")
 st.plotly_chart(fig, use_container_width=True)
 
 # 6. Penyewaan Sepeda Berdasarkan Tahun
-# Pastikan month dalam bentuk angka agar bisa diurutkan dengan benar
-month_order = {
-    1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun',
-    7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
-}
-
-# Konversi angka bulan ke nama bulan
-monthly_trend["month"] = monthly_trend["month"].map(month_order)
-
-# Konversi month ke kategori terurut
+# Pastikan kolom 'month' sudah kategori dengan urutan yang benar
 monthly_trend["month"] = pd.Categorical(
     monthly_trend["month"], 
     categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
     ordered=True
 )
+
+# Paksa sorting berdasarkan kategori month
+monthly_trend = monthly_trend.sort_values(by=["year", "month"], ascending=[True, True])
+
+# Cek urutan data setelah sorting
+st.write(monthly_trend[["year", "month", "total_rentals"]].head(20))
 
 # Buat visualisasi interaktif
 fig = px.line(
@@ -110,4 +107,8 @@ fig = px.line(
     markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"}
 )
 
+# Paksa urutan bulan di sumbu X
+fig.update_xaxes(categoryorder="array", categoryarray=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+
 st.plotly_chart(fig)
+
