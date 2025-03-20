@@ -47,8 +47,8 @@ fig = px.line(hourly_rentals, x='hour', y='total_rentals',
 st.plotly_chart(fig)
 
 
-# Penyewaan Berdasarkan bulan
-avg_rentals_by_month = df.groupby("month", observed=True)['total_rentals'].mean().reset_index()
+# 2. Penyewaan Berdasarkan bulan
+avg_rentals_by_month = day_df.groupby("month", observed=True)['total_rentals'].mean().reset_index()
 
 # Tentukan bulan dengan penyewaan terbanyak
 max_month = avg_rentals_by_month.loc[avg_rentals_by_month['total_rentals'].idxmax(), 'month']
