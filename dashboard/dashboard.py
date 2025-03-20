@@ -6,8 +6,7 @@ import seaborn as sns
 import matplotlib.ticker as ticker
 
 # Membaca dataset
-day_df = pd.read_csv("day.csv")
-hour_df = pd.read_csv("hour.csv")
+
 day_df = pd.read_csv("dashboard/day.csv")
 hour_df = pd.read_csv("dashboard/hour.csv")
 
