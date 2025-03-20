@@ -49,36 +49,39 @@ fig = px.line(hourly_rentals, x='hour', y='total_rentals',
 st.plotly_chart(fig)
 
 # 2. Penyewaan Berdasarkan Bulan
+st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 day_df["month"] = pd.Categorical(day_df["month"], categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ordered=True)
 avg_rentals_by_month = df_filtered.groupby("month", observed=False)["total_rentals"].mean().reset_index()
 avg_rentals_by_month["month"] = pd.Categorical(avg_rentals_by_month["month"], categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ordered=True)
 avg_rentals_by_month = avg_rentals_by_month.sort_values("month")
 fig = px.bar(avg_rentals_by_month, x='total_rentals', y='month', orientation='h', labels={'total_rentals': 'Rata-rata Penyewaan', 'month': 'Bulan'}, color_discrete_sequence=["royalblue"])
-st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 st.plotly_chart(fig)
 
 # 3. Penyewaan Berdasarkan Hari
+st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Hari")
 avg_rentals_by_weekday = df_filtered.groupby("one_of_week")["total_rentals"].mean().reset_index()
 order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 avg_rentals_by_weekday["one_of_week"] = pd.Categorical(avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True)
 avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
-fig = px.bar(avg_rentals_by_weekday, x="one_of_week", y="total_rentals", title="Rata-rata Penyewaan Sepeda dalam Seminggu", labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"}, color_discrete_sequence=["royalblue"], hover_data={"total_rentals": ":,.0f", "one_of_week": True})
+fig = px.bar(avg_rentals_by_weekday, x="one_of_week", y="total_rentals", labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"}, color_discrete_sequence=["royalblue"], hover_data={"total_rentals": ":,.0f", "one_of_week": True})
 st.plotly_chart(fig)
 
 # 4. Penyewaan Berdasarkan Kondisi Cuaca
+st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca")
 avg_rentals_by_weather = hour_df_filtered.groupby('weather_condition', observed=True)['total_rentals'].mean().reset_index()
 weather_order = ["clear", "misty", "light rain/light snow", "bad weather"]
 avg_rentals_by_weather["weather_condition"] = pd.Categorical(avg_rentals_by_weather["weather_condition"], categories=weather_order, ordered=True)
 avg_rentals_by_weather = avg_rentals_by_weather.sort_values("weather_condition")
-fig = px.bar(avg_rentals_by_weather, x="weather_condition", y="total_rentals", title="Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca", labels={"total_rentals": "Rata-rata Penyewaan", "weather_condition": "Kondisi Cuaca"}, color_discrete_sequence=["royalblue"])
+fig = px.bar(avg_rentals_by_weather, x="weather_condition", y="total_rentals", labels={"total_rentals": "Rata-rata Penyewaan", "weather_condition": "Kondisi Cuaca"}, color_discrete_sequence=["royalblue"])
 st.plotly_chart(fig)
 
 # 5. Penyewaan Berdasarkan jenis Penyewa 
+st.subheader("Perbandingan Penyewa Registered vs Casual")
 total_registered = df_filtered['registered_rentals'].sum()
 total_casual = df_filtered['casual_rentals'].sum()
 data = pd.DataFrame({"Kategori": ["Registered", "Casual"], "Jumlah": [total_registered, total_casual]})
 
-fig = px.pie(data, names="Kategori", values="Jumlah", color="Kategori", color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"}, title="Perbandingan Penyewa Registered vs Casual", hole=0.3)
+fig = px.pie(data, names="Kategori", values="Jumlah", color="Kategori", color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"},hole=0.3)
 fig.update_traces(textinfo="none", hoverinfo="label+percent+value")
 st.plotly_chart(fig, use_container_width=True)
 
@@ -92,5 +95,4 @@ monthly_trend["month"] = pd.Categorical(monthly_trend["month"],
 
 fig = px.line(monthly_trend, x="month", y="total_rentals", color="year", 
               markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"}, 
-              title="Perbandingan Tren Penyewaan Sepeda")
 st.plotly_chart(fig)
