@@ -48,25 +48,29 @@ st.plotly_chart(fig)
 
 
 # 2. Penyewaan Berdasarkan bulan
-avg_rentals_by_month = day_df.groupby("month", observed=True)['total_rentals'].mean().reset_index()
+# Grouping data berdasarkan bulan
+avg_rentals_by_month = df.groupby("month")["total_rentals"].mean().reset_index()
 
-# Tentukan bulan dengan penyewaan terbanyak
-max_month = avg_rentals_by_month.loc[avg_rentals_by_month['total_rentals'].idxmax(), 'month']
+# Mapping angka ke nama bulan
+month_labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+avg_rentals_by_month['month_name'] = avg_rentals_by_month['month'].apply(lambda x: month_labels[x-1])
 
-# Tambahkan warna untuk highlight bulan tertinggi
-avg_rentals_by_month['color'] = avg_rentals_by_month['month'].apply(
-    lambda x: 'royalblue' if x == max_month else 'lightgray')
+# Sort bulan secara urut
+avg_rentals_by_month = avg_rentals_by_month.sort_values(by="month")
 
 # Buat visualisasi dengan Plotly
-fig = px.bar(avg_rentals_by_month, x='total_rentals', y='month', 
-             orientation='h', color='color', 
+fig = px.bar(avg_rentals_by_month, 
+             x='total_rentals', 
+             y='month_name', 
+             orientation='h', 
              title='Rata-rata Penyewaan Sepeda Berdasarkan Bulan',
-             labels={'total_rentals': 'Rata-rata Penyewaan', 'month': 'Bulan'},
-             color_discrete_map='identity')
+             labels={'total_rentals': 'Rata-rata Penyewaan', 'month_name': 'Bulan'},
+             color_discrete_sequence=["royalblue"])  # Semua warna biru
 
 # Tampilkan di Streamlit
 st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 st.plotly_chart(fig)
+
 
 # Penyewaan Berdasarkan Hari dalam Seminggu
 st.subheader("Penyewaan Berdasarkan Hari dalam Seminggu")
