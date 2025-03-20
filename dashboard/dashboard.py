@@ -5,9 +5,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.ticker as ticker
 
-# Membaca dataset
-day_df = pd.read_csv("dashboard/day.csv")
-hour_df = pd.read_csv("dashboard/hour.csv")
+# Dapatkan path absolut folder tempat script dashboard.py berada
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Gabungkan dengan nama file dataset
+day_csv_path = os.path.join(BASE_DIR, "day.csv")
+hour_csv_path = os.path.join(BASE_DIR, "hour.csv")
+
+# Baca dataset
+day_df = pd.read_csv(day_csv_path)
+hour_df = pd.read_csv(hour_csv_path)
 
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
