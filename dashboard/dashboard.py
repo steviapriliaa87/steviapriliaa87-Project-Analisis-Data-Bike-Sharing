@@ -81,11 +81,11 @@ total_registered = df_filtered['registered_rentals'].sum()
 total_casual = df_filtered['casual_rentals'].sum()
 data = pd.DataFrame({"Kategori": ["Registered", "Casual"], "Jumlah": [total_registered, total_casual]})
 
-fig = px.pie(data, names="Kategori", values="Jumlah", color="Kategori", color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"},hole=0.3)
+fig = px.pie(data, names="Kategori", values="Jumlah", color="Kategori", color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"}, hole=0.3)
 fig.update_traces(textinfo="none", hoverinfo="label+percent+value")
 st.plotly_chart(fig, use_container_width=True)
 
-#6.Penyewaan Sepeda Berdasarkan Tahun
+# 6. Penyewaan Sepeda Berdasarkan Tahun
 st.subheader("Perbandingan Tren Penyewaan Sepeda Berdasarkan Tahun")
 
 monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
@@ -94,5 +94,6 @@ monthly_trend["month"] = pd.Categorical(monthly_trend["month"],
                                          ordered=True)
 
 fig = px.line(monthly_trend, x="month", y="total_rentals", color="year", 
-              markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"}, 
+              markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"})
+
 st.plotly_chart(fig)
