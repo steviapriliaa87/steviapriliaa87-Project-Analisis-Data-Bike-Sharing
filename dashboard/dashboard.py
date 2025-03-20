@@ -88,14 +88,15 @@ fig.update_traces(textinfo="none", hoverinfo="label+percent+value")
 st.plotly_chart(fig, use_container_width=True)
 
 # 6. Penyewaan Sepeda Berdasarkan Tahun
-st.subheader("Perbandingan Tren Penyewaan Sepeda Berdasarkan Tahun")
-
-monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
-monthly_trend["month"] = pd.Categorical(monthly_trend["month"], 
-                                         categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
-                                         ordered=True)
-
-fig = px.line(monthly_trend, x="month", y="total_rentals", color="year", 
-              markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"})
+monthly_trend = df_filtered.groupby(["year", "month"], observed=False)["total_rentals"].sum().reset_index()
+monthly_trend["month"] = pd.Categorical(
+    monthly_trend["month"], 
+    categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
+    ordered=True
+)
+fig = px.line(
+    monthly_trend, x="month", y="total_rentals", color="year", 
+    markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"}
+)
 
 st.plotly_chart(fig)
