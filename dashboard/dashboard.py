@@ -39,7 +39,6 @@ col3.metric("Penyewaan Tertinggi", df_filtered['total_rentals'].max())
 st.subheader("Rata-rata Penyewaan Sepeda per Jam")
 hourly_rentals = hour_df.groupby("hour")["total_rentals"].mean().reset_index()
 fig = px.line(hourly_rentals, x='hour', y='total_rentals', 
-              title='Rata-rata Penyewaan Sepeda per Jam', 
               labels={'hour': 'Jam', 'total_rentals': 'Jumlah Penyewaan'},
               markers=True)
 st.plotly_chart(fig)
@@ -57,7 +56,6 @@ fig = px.bar(avg_rentals_by_month,
              x='total_rentals', 
              y='month', 
              orientation='h', 
-             title='Rata-rata Penyewaan Sepeda Berdasarkan Bulan',
              labels={'total_rentals': 'Rata-rata Penyewaan', 'month': 'Bulan'},
              color_discrete_sequence=["royalblue"])  # Semua warna biru
 st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
@@ -65,6 +63,7 @@ st.plotly_chart(fig)
 
 
 #3.Penyewaan Berdasarkan Hari
+st.subheader("Rata-rata Penyewaan Sepeda dalam Seminggu")
 avg_rentals_by_weekday = (
     day_df.groupby("one_of_week")["total_rentals"]
     .mean()
@@ -76,9 +75,8 @@ avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
 avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
 fig = px.bar(
     avg_rentals_by_weekday, 
-    x="one_of_week",  # X-axis: Hari
-    y="total_rentals",  # Y-axis: Rata-rata Penyewaan
-    title="Rata-rata Penyewaan Sepeda dalam Seminggu",
+    x="one_of_week", 
+    y="total_rentals",  
     labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"},
     color_discrete_sequence=["royalblue"],  # Warna batang
     hover_data={"total_rentals": ":,.0f", "one_of_week": True}
