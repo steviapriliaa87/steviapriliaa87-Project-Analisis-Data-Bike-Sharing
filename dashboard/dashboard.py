@@ -13,20 +13,18 @@ hour_df = pd.read_csv("dashboard/hour.csv")
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
 
-# buat filter
+# Sidebar filters
 st.sidebar.header("Filter Data")
 selected_year = st.sidebar.multiselect("Pilih Tahun", day_df['date'].dt.year.unique(), default=day_df['date'].dt.year.unique())
-selected_season = st.sidebar.multiselect("Pilih Musim", day_df['season'].unique(), default=day_df['season'].unique())
 selected_month = st.sidebar.multiselect("Pilih Bulan", day_df['month'].unique(), default=day_df['month'].unique())
 selected_day_type = st.sidebar.radio("Pilih Jenis Hari", ["Semua", "Hari Kerja", "Libur"], index=0)
 
-df_filtered = day_df[(day_df['date'].dt.year.isin(selected_year)) & 
-                      (day_df['season'].isin(selected_season)) & 
-                      (day_df['month'].isin(selected_month))]
+# Apply filters
+df_filtered = day_df[(day_df['date'].dt.year.isin(selected_year)) & (day_df['month'].isin(selected_month))]
 if selected_day_type == "Hari Kerja":
-    df_filtered = df_filtered[df_filtered['working_day'] == 1]
+    df_filtered = df_filtered[df_filtered['workingday'] == 1]
 elif selected_day_type == "Libur":
-    df_filtered = df_filtered[df_filtered['working_day'] == 0]
+    df_filtered = df_filtered[df_filtered['workingday'] == 0]
 
 # Main Dashboard
 st.title("🚲 Dashboard Penyewaan Sepeda")
