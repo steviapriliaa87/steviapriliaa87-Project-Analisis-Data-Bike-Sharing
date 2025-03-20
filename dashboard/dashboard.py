@@ -4,6 +4,7 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.ticker as ticker
+import plotly.express as px
 
 # Membaca dataset
 day_df = pd.read_csv("dashboard/day.csv")
@@ -118,22 +119,25 @@ st.pyplot(fig)
 
 
 #5.Penyewaan Berdasarkan jenis Penyewa 
-# Data
 total_registered = hour_df["registered_rentals"].sum()
 total_casual = hour_df["casual_rentals"].sum()
 
-labels = [f"Registered ({total_registered})", f"Casual ({total_casual})"]
-sizes = [total_registered, total_casual]
-colors = ["darkblue", "lightblue"]
+data = pd.DataFrame({
+    "Kategori": ["Registered", "Casual"],
+    "Jumlah": [total_registered, total_casual]
+})
 
-# Membuat plot pie chart
-fig, ax = plt.subplots(figsize=(6, 6))
-ax.pie(
-    sizes, labels=labels, autopct="%1.1f%%",
-    colors=colors, startangle=90, wedgeprops={"edgecolor": "white"}
+# Membuat pie chart dengan Plotly
+fig = px.pie(
+    data,
+    names="Kategori",
+    values="Jumlah",
+    color="Kategori",
+    color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"},
+    title="Perbandingan Penyewa Registered vs Casual",
+    hole=0.3,  # Membuat efek donut chart
 )
-ax.set_title("Perbandingan Penyewa Registered vs Casual", fontsize=14, fontweight="bold")
 
-# Menampilkan plot di Streamlit
-st.pyplot(fig)
+# Menampilkan pie chart di Streamlit
+st.plotly_chart(fig, use_container_width=True)
 
