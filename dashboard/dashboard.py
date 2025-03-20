@@ -81,3 +81,41 @@ fig = px.pie(data, names="Kategori", values="Jumlah", color="Kategori", color_di
 fig.update_traces(textinfo="none", hoverinfo="label+percent+value")
 
 st.plotly_chart(fig, use_container_width=True)
+
+#6.Penyewaan Sepeda Berdasarkan Tahun
+st.subheader("Perbandingan Tren Penyewaan Sepeda Berdasarkan Tahun")
+
+selected_compare_years = st.multiselect("Pilih Tahun untuk Dibandingkan", day_df['date'].dt.year.unique(), default=[2011, 2012])
+
+monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
+monthly_trend["month"] = pd.Categorical(monthly_trend["month"], 
+                                         categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
+                                         ordered=True)
+monthly_trend = monthly_trend[monthly_trend["year"].isin(selected_compare_years)]
+
+fig = px.line(monthly_trend, x="month", y="total_rentals", color="year", 
+              markers=True, labels={"month": "Bulan", "total_rentals": "Total Penyewaan", "year": "Tahun"}, 
+              title="Perbandingan Tren Penyewaan Sepeda")
+
+st.plotly_chart(fig)
+
+# Penyewaan Berdasarkan jenis Penyewa 
+data = pd.DataFrame({
+    "Kategori": ["Registered", "Casual"],
+    "Jumlah": [df_filtered['registered'].sum(), df_filtered['casual'].sum()]
+})
+
+fig = px.pie(
+    data,
+    names="Kategori",
+    values="Jumlah",
+    color="Kategori",
+    color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"},
+    title="Perbandingan Penyewa Registered vs Casual",
+    hole=0.3,  # Donut chart style
+)
+
+fig.update_traces(textinfo="none")
+
+st.plotly_chart(fig, use_container_width=True)
+
