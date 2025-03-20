@@ -63,11 +63,41 @@ fig = px.bar(avg_rentals_by_month,
 st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 st.plotly_chart(fig)
 
-# Penyewaan Berdasarkan Hari dalam Seminggu
-st.subheader("Penyewaan Berdasarkan Hari dalam Seminggu")
-fig_weekday = px.bar(day_df.groupby('one_of_week')['total_rentals'].sum().reset_index(), x='one_of_week', y='total_rentals', title="Total Penyewaan per Hari dalam Seminggu")
-st.plotly_chart(fig_weekday)
+#3.Penyewaan Berdasarkan Hari dalam Seminggu
+avg_rentals_by_weekday = (
+    day_df.groupby("one_of_week", observed=False)["total_rentals"]
+    .mean()
+    .reset_index()
+)
 
+# Urutan hari dalam seminggu
+order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
+    avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True
+)
+avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
+
+# Tampilkan tabel
+print("Tabel Rata-rata Penyewaan Sepeda dalam Seminggu:")
+display(avg_rentals_by_weekday)
+
+# Buat visualisasi
+plt.figure(figsize=(10, 5))
+sns.barplot(
+    data=avg_rentals_by_weekday,
+    x="one_of_week",
+    y="total_rentals",
+    color="royalblue",  # Warna diubah menjadi biru
+)
+
+plt.title("Rata-rata Penyewaan Sepeda dalam Seminggu", fontsize=14, fontweight="bold")
+plt.xlabel("Hari", fontsize=12)
+plt.ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+plt.xticks(rotation=45)
+plt.grid(axis="y", linestyle="--", alpha=0.6)
+
+# Tampilkan plot
+plt.show()
 # **Pola Penyewaan Sepeda per Jam (Line Chart dengan Marker)**
 st.subheader("Pola Penyewaan Sepeda per Jam")
 
