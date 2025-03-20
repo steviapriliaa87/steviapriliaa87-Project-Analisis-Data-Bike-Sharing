@@ -64,6 +64,38 @@ st.plotly_chart(fig)
 
 
 #3.Penyewaan Berdasarkan Hari
+avg_rentals_by_weekday = (
+    day_df.groupby("one_of_week")["total_rentals"]
+    .mean()
+    .reset_index()
+)
+
+# **Urutan hari dalam seminggu**
+order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
+    avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True
+)
+avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
+
+# **Buat visualisasi dengan Plotly (VERTIKAL)**
+fig = px.bar(
+    avg_rentals_by_weekday, 
+    x="one_of_week",  # X-axis: Hari
+    y="total_rentals",  # Y-axis: Rata-rata Penyewaan
+    title="Rata-rata Penyewaan Sepeda dalam Seminggu",
+    labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"},
+    color_discrete_sequence=["royalblue"],  # Warna batang
+    hover_data={"total_rentals": ":,.0f", "one_of_week": True}  # Tooltip interaktif
+)
+
+# **Tampilkan grafik di Streamlit**
+st.plotly_chart(fig)
+
+
+
+
+
+#4.Penyewaan Berdasarkan Kondisi Cuaca
 avg_rentals_by_weather = hour_df.groupby('weather_condition', observed=True)['total_rentals'].mean().reset_index()
 weather_order = ["clear", "misty", "light rain/light snow", "bad weather"]
 avg_rentals_by_weather["weather_condition"] = pd.Categorical(
