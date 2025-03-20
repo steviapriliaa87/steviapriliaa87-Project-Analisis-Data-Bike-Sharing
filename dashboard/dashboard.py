@@ -46,25 +46,13 @@ st.plotly_chart(fig)
 
 
 #2.Penyewaan Berdasarkan bulan
-# Pastikan kolom 'month' bertipe kategori sebelum groupby
 day_df["month"] = pd.Categorical(day_df["month"], 
-                                 categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                                             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
-                                 ordered=True)
-
-# Grouping data berdasarkan bulan
+                                 categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ordered=True)
 avg_rentals_by_month = day_df.groupby("month", observed=False)["total_rentals"].mean().reset_index()
-
-# Pastikan kolom 'month' tetap kategori setelah reset_index
 avg_rentals_by_month["month"] = pd.Categorical(avg_rentals_by_month["month"], 
-                                               categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                                                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
+                                               categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
                                                ordered=True)
-
-# Urutkan berdasarkan kategori bulan
 avg_rentals_by_month = avg_rentals_by_month.sort_values("month")
-
-# Buat visualisasi
 fig = px.bar(avg_rentals_by_month, 
              x='total_rentals', 
              y='month', 
@@ -72,28 +60,20 @@ fig = px.bar(avg_rentals_by_month,
              title='Rata-rata Penyewaan Sepeda Berdasarkan Bulan',
              labels={'total_rentals': 'Rata-rata Penyewaan', 'month': 'Bulan'},
              color_discrete_sequence=["royalblue"])  # Semua warna biru
-
-# Tampilkan di Streamlit
 st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 st.plotly_chart(fig)
 
 
 #3.Penyewaan Berdasarkan Hari
-# **Grouping data berdasarkan hari dalam seminggu**
 avg_rentals_by_weekday = (
     day_df.groupby("one_of_week")["total_rentals"]
     .mean()
     .reset_index()
 )
-
-# **Urutan hari dalam seminggu**
 order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
-    avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True
-)
+    avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True)
 avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
-
-# **Buat visualisasi dengan Plotly (VERTIKAL)**
 fig = px.bar(
     avg_rentals_by_weekday, 
     x="one_of_week",  # X-axis: Hari
@@ -101,19 +81,7 @@ fig = px.bar(
     title="Rata-rata Penyewaan Sepeda dalam Seminggu",
     labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"},
     color_discrete_sequence=["royalblue"],  # Warna batang
-    hover_data={"total_rentals": ":,.0f", "one_of_week": True}  # Tooltip interaktif
+    hover_data={"total_rentals": ":,.0f", "one_of_week": True}
 )
-
-# **Tampilkan grafik di Streamlit**
 st.plotly_chart(fig)
 
-
-# Scatter Plot Penyewaan vs. Suhu Udara
-st.subheader("Pengaruh Suhu terhadap Penyewaan")
-fig_scatter = px.scatter(df_filtered, x='temperature', y='total_rentals', color='weather_condition', title="Hubungan Suhu dan Penyewaan Sepeda")
-st.plotly_chart(fig_scatter)
-
-# Penyewaan Berdasarkan Bulan
-st.subheader("Penyewaan Berdasarkan Bulan")
-fig_month = px.bar(df_filtered.groupby('month')['total_rentals'].sum().reset_index(), x='month', y='total_rentals', title='Total Penyewaan per Bulan')
-st.plotly_chart(fig_month)
