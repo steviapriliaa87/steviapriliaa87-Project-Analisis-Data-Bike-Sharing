@@ -3,12 +3,9 @@ import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
 
-# Mendapatkan path absolut ke folder 'dashboard'
-script_dir = os.path.dirname(os.path.abspath(_file_))
-
-# Path ke file CSV
-day_data_path = os.path.join(script_dir, "day.csv")
-hour_data_path = os.path.join(script_dir, "hour.csv")
+# Membaca dataset
+day_df = pd.read_csv("dashboard/day.csv")
+hour_df = pd.read_csv("dashboard/hour.csv")
 
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
