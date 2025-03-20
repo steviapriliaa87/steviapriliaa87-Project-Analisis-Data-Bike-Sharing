@@ -64,29 +64,19 @@ st.plotly_chart(fig)
 
 
 #3.Penyewaan Berdasarkan Hari
-st.subheader("Rata-rata Penyewaan Sepeda dalam Seminggu")
-avg_rentals_by_weekday = (
-    day_df.groupby("one_of_week")["total_rentals"]
-    .mean()
-    .reset_index()
-)
-order = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
-    avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True)
-avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
-fig = px.bar(
-    avg_rentals_by_weekday, 
-    x="one_of_week", 
-    y="total_rentals",  
-    labels={"total_rentals": "Rata-rata Penyewaan", "one_of_week": "Hari"},
-    color_discrete_sequence=["royalblue"], 
-    hover_data={"total_rentals": ":,.0f", "one_of_week": True}
-)
-st.plotly_chart(fig)
-
-#4.Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca
 avg_rentals_by_weather = hour_df.groupby('weather_condition', observed=True)['total_rentals'].mean().reset_index()
+
+# **Urutkan kondisi cuaca sesuai keinginan**
+weather_order = ["clear", "misty", "light rain/light snow", "bad weather"]
+avg_rentals_by_weather["weather_condition"] = pd.Categorical(
+    avg_rentals_by_weather["weather_condition"], categories=weather_order, ordered=True
+)
+avg_rentals_by_weather = avg_rentals_by_weather.sort_values("weather_condition")
+
+# **Buat palet warna untuk visualisasi**
 palette = sns.color_palette("coolwarm", n_colors=len(avg_rentals_by_weather))
+
+# **Buat visualisasi**
 fig, ax = plt.subplots(figsize=(8, 5))
 sns.barplot(
     data=avg_rentals_by_weather,
@@ -95,12 +85,22 @@ sns.barplot(
     palette=palette,
     ax=ax
 )
+
+# **Format angka pada sumbu Y**
 ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{int(x):,}'))
+
+# **Judul dan Label**
 ax.set_title("Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca", fontsize=14, fontweight="bold")
 ax.set_xlabel("Kondisi Cuaca", fontsize=12)
 ax.set_ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
-ax.set_xticklabels(avg_rentals_by_weather["weather_condition"], rotation=30)
+
+# **Rotasi label pada sumbu X**
+ax.set_xticklabels(weather_order, rotation=30)
+
+# **Tambahkan grid horizontal**
 ax.grid(axis="y", linestyle="--", alpha=0.6)
+
+# **Tampilkan plot di Streamlit**
 st.pyplot(fig)
 
 
