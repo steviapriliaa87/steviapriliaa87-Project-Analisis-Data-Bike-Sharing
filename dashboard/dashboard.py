@@ -64,6 +64,7 @@ st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 st.plotly_chart(fig)
 
 #3.Penyewaan Berdasarkan Hari dalam Seminggu
+# Grouping data berdasarkan hari dalam seminggu
 avg_rentals_by_weekday = (
     day_df.groupby("one_of_week", observed=False)["total_rentals"]
     .mean()
@@ -77,42 +78,29 @@ avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
 )
 avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
 
-# Tampilkan tabel
-print("Tabel Rata-rata Penyewaan Sepeda dalam Seminggu:")
-display(avg_rentals_by_weekday)
+# **Tampilkan tabel dalam Streamlit**
+st.subheader("Tabel Rata-rata Penyewaan Sepeda dalam Seminggu")
+st.dataframe(avg_rentals_by_weekday)  # ✅ Ganti `display()` dengan `st.dataframe()`
 
-# Buat visualisasi
-plt.figure(figsize=(10, 5))
+# **Buat visualisasi**
+fig, ax = plt.subplots(figsize=(10, 5))
 sns.barplot(
     data=avg_rentals_by_weekday,
     x="one_of_week",
     y="total_rentals",
-    color="royalblue",  # Warna diubah menjadi biru
+    color="royalblue",
+    ax=ax
 )
 
-plt.title("Rata-rata Penyewaan Sepeda dalam Seminggu", fontsize=14, fontweight="bold")
-plt.xlabel("Hari", fontsize=12)
-plt.ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
-plt.xticks(rotation=45)
-plt.grid(axis="y", linestyle="--", alpha=0.6)
+ax.set_title("Rata-rata Penyewaan Sepeda dalam Seminggu", fontsize=14, fontweight="bold")
+ax.set_xlabel("Hari", fontsize=12)
+ax.set_ylabel("Rata-rata Penyewaan Sepeda", fontsize=12)
+ax.set_xticklabels(order, rotation=45)
+ax.grid(axis="y", linestyle="--", alpha=0.6)
 
-# Tampilkan plot
-plt.show()
-# **Pola Penyewaan Sepeda per Jam (Line Chart dengan Marker)**
-st.subheader("Pola Penyewaan Sepeda per Jam")
-
-# Mengelompokkan data berdasarkan jam dalam sehari
-df_hourly = hour_df.groupby('hour')['total_rentals'].mean().reset_index()
-
-fig, ax = plt.subplots()
-ax.plot(df_hourly['hour'], df_hourly['total_rentals'], marker='o', linestyle='-', color='b')
-
-ax.set_title("Rata-rata Penyewaan Sepeda per Jam")
-ax.set_xlabel("Jam dalam Sehari")
-ax.set_ylabel("Rata-rata Jumlah Penyewaan")
-ax.grid(True)
-
+# **Tampilkan plot di Streamlit**
 st.pyplot(fig)
+
 
 # Scatter Plot Penyewaan vs. Suhu Udara
 st.subheader("Pengaruh Suhu terhadap Penyewaan")
