@@ -4,8 +4,6 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.ticker as ticker
-# Dapatkan path direktori tempat script sedang dijalankan
-BASE_DIR = Path(__file__).resolve().parent
 
 # Membaca dataset
  day_df = pd.read_csv("day.csv")
