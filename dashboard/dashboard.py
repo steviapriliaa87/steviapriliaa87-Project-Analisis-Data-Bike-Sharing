@@ -77,11 +77,6 @@ avg_rentals_by_weekday["one_of_week"] = pd.Categorical(
     avg_rentals_by_weekday["one_of_week"], categories=order, ordered=True
 )
 avg_rentals_by_weekday = avg_rentals_by_weekday.sort_values("one_of_week")
-
-# **Tampilkan tabel dalam Streamlit**
-st.subheader("Tabel Rata-rata Penyewaan Sepeda dalam Seminggu")
-st.dataframe(avg_rentals_by_weekday)  # ✅ Ganti `display()` dengan `st.dataframe()`
-
 # **Buat visualisasi**
 fig, ax = plt.subplots(figsize=(10, 5))
 sns.barplot(
