@@ -98,22 +98,3 @@ fig = px.line(monthly_trend, x="month", y="total_rentals", color="year",
               title="Perbandingan Tren Penyewaan Sepeda")
 st.plotly_chart(fig)
 
-#7.Penyewaan Berdasarkan jenis Penyewa 
-data = pd.DataFrame({
-    "Kategori": ["Registered", "Casual"],
-    "Jumlah": [df_filtered['registered'].sum(), df_filtered['casual'].sum()]
-})
-
-fig = px.pie(
-    data,
-    names="Kategori",
-    values="Jumlah",
-    color="Kategori",
-    color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"},
-    title="Perbandingan Penyewa Registered vs Casual",
-    hole=0.3,  # Donut chart style
-)
-
-fig.update_traces(textinfo="none")
-
-st.plotly_chart(fig, use_container_width=True)
