@@ -80,8 +80,6 @@ fig = px.pie(data, names="Kategori", values="Jumlah", color="Kategori", color_di
 #6.Penyewaan Sepeda Berdasarkan Tahun
 st.subheader("Perbandingan Tren Penyewaan Sepeda Berdasarkan Tahun")
 
-selected_compare_years = st.multiselect("Pilih Tahun untuk Dibandingkan", day_df['date'].dt.year.unique(), default=[2011, 2012])
-
 monthly_trend = day_df.groupby(["year", "month"], observed=True)["total_rentals"].sum().reset_index()
 monthly_trend["month"] = pd.Categorical(monthly_trend["month"], 
                                          categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
