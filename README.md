@@ -1,8 +1,7 @@
 # 🎯 Submission Dicoding: *Analisis Data dengan Python*
 
 ## 🚀 Preview
-![Bike Sharing Dashboard Streamlit Preview](https://github.com/steviapriliaa87/steviapriliaa87-Project-Analisis-Data-Bike-Sharing/blob/639d9c804ee159b333f1d48e04c6db2a3402aa16/preview/preview%201.png)
-
+![Bike Sharing Dashboard Streamlit Preview](https://github.com/steviapriliaa87/steviapriliaa87-Project-Analisis-Data-Bike-Sharing/blob/616ef0e8748381980e74155bb425cb6063544a71/preview/Preview_1.jpg)
 ---
 
 ## 📊 Project Analisis Data
@@ -22,10 +21,10 @@ Proyek ini bertujuan untuk menganalisis *Bike Sharing Dataset* guna mendapatkan 
 
 ## 🗂️ Struktur Direktori
 
-- **dashboard/** → Berisi file `dashboard.py` untuk membangun dashboard dengan Streamlit.
-- **data/** → Memuat data mentah dan bersih dalam format `.csv`.
+- **dashboard/** → Berisi file `dashboard.py` dan dataset untuk membangun dashboard dengan Streamlit.
+- **data/** → Memuat data mentah dalam format `.csv`.
 - **preview/** → Cuplikan visualisasi dashboard.
-- **notebook.ipynb** → Notebook analisis data lengkap.
+- **notebook.ipynb** → Notebook berisi seluruh tahapan analisis data yang dilakukan.
 - **requirements.txt** → Daftar library yang digunakan.
 - **url.txt** → Tautan menuju dashboard yang sudah di-deploy.
 
@@ -33,89 +32,52 @@ Proyek ini bertujuan untuk menganalisis *Bike Sharing Dataset* guna mendapatkan 
 
 ## ⚙️ Instalasi
 
-1. **Clone repository** ini ke komputer lokal Anda:
-
+1. **Download Repository dari Github**:
+   - Buka halaman repositori di GitHub
+   - Klik tombol Code, lalu download ZIP
+   - Ekstrak file ZIP ke lokasi yang mudah diakses, contoh:
    ```bash
-   git clone https://github.com/steviapriliaa87/Project-Analisis-Data-Bike-Sharing.git
+   C:\steviapriliaa87-Project-Analisis-Data-Bike-Sharing-main
    ```
 
-2. **Setup Virtual Environment** (disarankan untuk menjaga isolasi library):
+2. **Buka Command Prompt (CMD) dan Masuk ke Folder Proyek**:
+    ```bash
+   cd C:\steviapriliaa87-Project-Analisis-Data-Bike-Sharing-main
+   ```
 
-   ```bash
-   # Membuat virtual environment
+3. **Buat dan Aktifkan Virtual Environment:**
+    ```bash
    python -m venv env
-
-   # Mengaktifkan virtual environment
-   # Windows
-   .\env\Scripts\activate
-   # Mac/Linux
-   source env/bin/activate
    ```
+    - **Windows :**
+      ```bash
+      env\Scripts\activate
+      ```
+    - **Mac/Linux:**
+       ```bash
+      source env/bin/activate
+      ```
 
-3. **Install library** yang dibutuhkan menggunakan `requirements.txt`:
-
+4. **Install Library dari requirements.txt**:
    ```bash
    pip install -r requirements.txt
    ```
-
 ---
+
 
 ## 📊 Menjalankan Dashboard
 
-Untuk melihat visualisasi interaktif dari hasil analisis data:
-
-1. Pastikan Anda sudah berada di direktori utama proyek setelah clone repository.
-2. Pastikan folder `data/` tetap berada di lokasi yang sama seperti saat di-clone.
-3. Jalankan Streamlit:
-
+1. Pastikan dataset ada di folder yang benar
+2. Jalankan Streamlit:
    ```bash
    streamlit run dashboard/dashboard.py
    ```
-
-📌 **Catatan:**
-Pastikan file `dashboard.py` menggunakan path relatif yang benar agar dataset bisa diakses:
-
-```python
-import pandas as pd
-
-data_day = pd.read_csv("../data/day_data_bersih.csv")
-data_hour = pd.read_csv("../data/hour_data_bersih.csv")
-```
 
 ---
 
 ## 🔗 Penggunaan
 
-Jika ingin langsung melihat hasil akhirnya, bisa kunjungi [Dashboard Penyewaan Sepeda🚲](https://dashboardbikeanalysis.streamlit.app/)
-
----
-
-## 🔍 Troubleshooting
-Jika dashboard mengalami error karena file data tidak ditemukan, periksa kembali struktur folder:
-
-```
-/project-root
-│── dashboard/
-│   ├── dashboard.py
-│── data/
-│   ├── day_data_bersih.csv
-│   ├── hour_data_bersih.csv
-```
-
-**Solusi:**
-- ✅ Pastikan file CSV berada di dalam folder `data/`, bukan di folder lain.
-- ✅ Periksa apakah path relatif di `dashboard.py` sudah sesuai (`../data/nama_file.csv`).
-- ✅ Jika error tetap terjadi, coba jalankan perintah berikut untuk melihat isi folder:
-
-   ```bash
-   ls -R  # Untuk Linux/Mac
-   dir /s # Untuk Windows
-   ```
-
----
-
-##❓ Bantuan
-Jika Anda memiliki pertanyaan, saran, atau menemukan masalah, silakan ajukan melalui GitHub Issues.
+Jika ingin langsung melihat hasil akhirnya, bisa kunjungi [Dashboard Penyewaan Sepeda🚲](https://dashboarddatabike.streamlit.app/)
 
 ---
 
