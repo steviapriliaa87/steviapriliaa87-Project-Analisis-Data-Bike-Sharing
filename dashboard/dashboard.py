@@ -6,58 +6,76 @@ import plotly.express as px
 day_df = pd.read_csv("dashboard/day.csv")
 hour_df = pd.read_csv("dashboard/hour.csv")
 
-# Konversi tipe data datetime
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
 
 # Sidebar untuk filter
-st.sidebar.header("🔍 Filter Data")
+st.sidebar.header("Filter Data")
 
-# Filter Pilih Tahun (Dropdown)
-selected_year = st.sidebar.selectbox("Pilih Tahun", sorted(day_df['date'].dt.year.unique()), index=0)
+# Filter Tahun
+all_years = sorted(day_df['date'].dt.year.unique())
+selected_year = st.sidebar.multiselect("Pilih Tahun", ["Semua"] + all_years, default=["Semua"])
 
-# Filter Pilih Hari dalam Seminggu (Dropdown)
-days_order = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-selected_day = st.sidebar.selectbox("Pilih Hari", days_order, index=0)
+# Filter Musim
+all_seasons = day_df['season'].unique()
+selected_season = st.sidebar.multiselect("Pilih Musim", ["Semua"] + list(all_seasons), default=["Semua"])
 
-# Filter Pilih Kondisi Cuaca (Dropdown)
-weather_options = day_df["weather_condition"].unique()
-selected_weather = st.sidebar.selectbox("Pilih Kondisi Cuaca", weather_options, index=0)
+# Filter Bulan
+all_months = day_df['month'].unique()
+selected_month = st.sidebar.multiselect("Pilih Bulan", ["Semua"] + list(all_months), default=["Semua"])
 
-# Filter Pilih Jenis Hari (Dropdown)
-day_type_options = {"Semua": None, "Hari Kerja": 1, "Libur": 0}
-selected_day_type = st.sidebar.selectbox("Pilih Jenis Hari", list(day_type_options.keys()), index=0)
-
-# Filter Pilih Jenis Penyewa (Dropdown)
-renter_options = {"Semua": None, "Registered": "registered_rentals", "Casual": "casual_rentals"}
-selected_renter = st.sidebar.selectbox("Pilih Jenis Penyewa", list(renter_options.keys()), index=0)
+# Filter Jenis Hari
+selected_day_type = st.sidebar.radio("Pilih Jenis Hari", ["Semua", "Hari Kerja", "Libur"], index=0)
 
 # Filter dataset sesuai pilihan
-df_filtered = day_df[day_df['date'].dt.year == selected_year]
+if "Semua" not in selected_year:
+    day_df = day_df[day_df['date'].dt.year.isin(selected_year)]
+if "Semua" not in selected_season:
+    day_df = day_df[day_df['season'].isin(selected_season)]
+if "Semua" not in selected_month:
+    day_df = day_df[day_df['month'].isin(selected_month)]
+if selected_day_type == "Hari Kerja":
+    day_df = day_df[day_df['working_day'] == 1]
+elif selected_day_type == "Libur":
+    day_df = day_df[day_df['working_day'] == 0]
 
-if selected_day_type != "Semua":
-    df_filtered = df_filtered[df_filtered["working_day"] == day_type_options[selected_day_type]]
-
-if selected_weather:
-    df_filtered = df_filtered[df_filtered["weather_condition"] == selected_weather]
-
-if selected_renter != "Semua":
-    df_filtered = df_filtered[["date", selected_renter]]
-
-# Tampilan Dashboard
 st.title("🚲 Dashboard Penyewaan Sepeda")
 st.subheader("Ringkasan Statistik")
 
 col1, col2, col3 = st.columns(3)
-col1.metric("Total Penyewaan", df_filtered["total_rentals"].sum())
-col2.metric("Rata-rata Harian", round(df_filtered["total_rentals"].mean(), 2))
-col3.metric("Penyewaan Tertinggi", df_filtered["total_rentals"].max())
+col1.metric("Total Penyewaan", day_df['total_rentals'].sum())
+col2.metric("Rata-rata Harian", round(day_df['total_rentals'].mean(), 2))
+col3.metric("Penyewaan Tertinggi", day_df['total_rentals'].max())
 
-# Visualisasi Rata-rata Penyewaan Sepeda Berdasarkan Hari
-avg_rentals_by_weekday = df_filtered.groupby("one_of_week")["total_rentals"].mean().reset_index()
-avg_rentals_by_weekday["one_of_week"] = pd.Categorical(avg_rentals_by_weekday["one_of_week"], categories=days_order, ordered=True)
-fig = px.bar(avg_rentals_by_weekday, x="one_of_week", y="total_rentals",
-             title="Rata-rata Penyewaan Sepeda Berdasarkan Hari",
-             labels={"one_of_week": "Hari", "total_rentals": "Jumlah Penyewaan"},
-             color_discrete_sequence=["royalblue"])
+# Visualisasi
+st.subheader("Rata-rata Penyewaan Sepeda per Jam")
+hourly_rentals = hour_df.groupby("hour")["total_rentals"].mean().reset_index()
+fig = px.line(hourly_rentals, x='hour', y='total_rentals', markers=True)
+st.plotly_chart(fig)
+
+st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
+avg_rentals_by_month = day_df.groupby("month")["total_rentals"].mean().reset_index()
+fig = px.bar(avg_rentals_by_month, x='month', y='total_rentals', color_discrete_sequence=["royalblue"])
+st.plotly_chart(fig)
+
+st.subheader("Rata-rata Penyewaan Sepeda dalam Seminggu")
+avg_rentals_by_weekday = day_df.groupby("one_of_week")["total_rentals"].mean().reset_index()
+fig = px.bar(avg_rentals_by_weekday, x="one_of_week", y="total_rentals", color_discrete_sequence=["royalblue"])
+st.plotly_chart(fig)
+
+st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Kondisi Cuaca")
+avg_rentals_by_weather = day_df.groupby('weather_condition')['total_rentals'].mean().reset_index()
+fig = px.bar(avg_rentals_by_weather, x="weather_condition", y="total_rentals", color_discrete_sequence=["royalblue"])
+st.plotly_chart(fig)
+
+st.subheader("Perbandingan Penyewa Registered vs Casual")
+total_registered = day_df['registered_rentals'].sum()
+total_casual = day_df['casual_rentals'].sum()
+data = pd.DataFrame({"Kategori": ["Registered", "Casual"], "Jumlah": [total_registered, total_casual]})
+fig = px.pie(data, names="Kategori", values="Jumlah", hole=0.3)
+st.plotly_chart(fig)
+
+st.subheader("Perbandingan Tren Penyewaan Sepeda Berdasarkan Tahun")
+monthly_trend = day_df.groupby(["year", "month"])["total_rentals"].sum().reset_index()
+fig = px.line(monthly_trend, x="month", y="total_rentals", color="year", markers=True)
 st.plotly_chart(fig)
