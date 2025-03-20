@@ -1,1 +1,1 @@
-https://dashboardbikeanalysis.streamlit.app/
+https://dashboarddatabike.streamlit.app/
