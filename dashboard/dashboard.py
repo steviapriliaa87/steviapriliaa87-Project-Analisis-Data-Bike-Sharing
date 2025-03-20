@@ -92,9 +92,6 @@ fig = px.bar(
 st.plotly_chart(fig)
 
 
-
-
-
 #4.Penyewaan Berdasarkan Kondisi Cuaca
 avg_rentals_by_weather = hour_df.groupby('weather_condition', observed=True)['total_rentals'].mean().reset_index()
 weather_order = ["clear", "misty", "light rain/light snow", "bad weather"]
@@ -119,4 +116,24 @@ ax.set_xticklabels(weather_order, rotation=30)
 ax.grid(axis="y", linestyle="--", alpha=0.6)
 st.pyplot(fig)
 
+
+#5.Penyewaan Berdasarkan jenis Penyewa 
+# Data
+total_registered = hour_df["registered_rentals"].sum()
+total_casual = hour_df["casual_rentals"].sum()
+
+labels = [f"Registered ({total_registered})", f"Casual ({total_casual})"]
+sizes = [total_registered, total_casual]
+colors = ["darkblue", "lightblue"]
+
+# Membuat plot pie chart
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.pie(
+    sizes, labels=labels, autopct="%1.1f%%",
+    colors=colors, startangle=90, wedgeprops={"edgecolor": "white"}
+)
+ax.set_title("Perbandingan Penyewa Registered vs Casual", fontsize=14, fontweight="bold")
+
+# Menampilkan plot di Streamlit
+st.pyplot(fig)
 
