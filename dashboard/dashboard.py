@@ -119,9 +119,6 @@ st.pyplot(fig)
 
 
 #5.Penyewaan Berdasarkan jenis Penyewa 
-total_registered = hour_df["registered_rentals"].sum()
-total_casual = hour_df["casual_rentals"].sum()
-
 data = pd.DataFrame({
     "Kategori": ["Registered", "Casual"],
     "Jumlah": [total_registered, total_casual]
@@ -135,9 +132,11 @@ fig = px.pie(
     color="Kategori",
     color_discrete_map={"Registered": "darkblue", "Casual": "lightblue"},
     title="Perbandingan Penyewa Registered vs Casual",
-    hole=0.3,  # Membuat efek donut chart
+    hole=0.3,  # Donut chart style
 )
+
+# Menghilangkan label nilai langsung pada chart
+fig.update_traces(textinfo="none")
 
 # Menampilkan pie chart di Streamlit
 st.plotly_chart(fig, use_container_width=True)
-
