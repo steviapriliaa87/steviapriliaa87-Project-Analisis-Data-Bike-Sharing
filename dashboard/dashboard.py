@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
@@ -7,8 +8,8 @@ import matplotlib.ticker as ticker
 
 # Membaca dataset
 
-day_df = pd.read_csv("dashboard/day.csv")
-hour_df = pd.read_csv("dashboard/hour.csv")
+day_df = pd.read_csv(os.path.join(os.path.dirname(__file__), "day.csv"))
+hour_df = pd.read_csv(os.path.join(os.path.dirname(__file__), "hour.csv"))
 
 day_df['date'] = pd.to_datetime(day_df['date'])
 hour_df['date'] = pd.to_datetime(hour_df['date'])
