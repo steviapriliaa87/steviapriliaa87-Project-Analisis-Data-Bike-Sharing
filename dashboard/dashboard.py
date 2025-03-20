@@ -34,48 +34,32 @@ col1.metric("Total Penyewaan", df_filtered['total_rentals'].sum())
 col2.metric("Rata-rata Harian", round(df_filtered['total_rentals'].mean(), 2))
 col3.metric("Penyewaan Tertinggi", df_filtered['total_rentals'].max())
 
-# 1. Penyewaan Sepeda berdasarkan Hari
+#1.Penyewaan Sepeda berdasarkan Jam
 st.subheader("Rata-rata Penyewaan Sepeda per Jam")
-# Mengelompokkan data berdasarkan jam dan menghitung rata-rata penyewaan
 hourly_rentals = hour_df.groupby("hour")["total_rentals"].mean().reset_index()
-# Membuat line plot menggunakan Plotly Express
 fig = px.line(hourly_rentals, x='hour', y='total_rentals', 
               title='Rata-rata Penyewaan Sepeda per Jam', 
               labels={'hour': 'Jam', 'total_rentals': 'Jumlah Penyewaan'},
               markers=True)
-
 st.plotly_chart(fig)
 
 
-# 2. Penyewaan Berdasarkan bulan
-# Pastikan kolom 'month' bertipe kategori sebelum groupby
+#2.Penyewaan Berdasarkan bulan
 day_df["month"] = pd.Categorical(day_df["month"], 
-                                 categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                                             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
-                                 ordered=True)
-
-# Grouping data berdasarkan bulan
+                                 categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ordered=True)
 avg_rentals_by_month = day_df.groupby("month", observed=False)["total_rentals"].mean().reset_index()
-
-# Pastikan kolom 'month' tetap kategori setelah reset_index
 avg_rentals_by_month["month"] = pd.Categorical(avg_rentals_by_month["month"], 
                                                categories=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                                                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
                                                ordered=True)
-
-# Urutkan berdasarkan kategori bulan
 avg_rentals_by_month = avg_rentals_by_month.sort_values("month")
-
-# Buat visualisasi
 fig = px.bar(avg_rentals_by_month, 
              x='total_rentals', 
              y='month', 
              orientation='h', 
              title='Rata-rata Penyewaan Sepeda Berdasarkan Bulan',
              labels={'total_rentals': 'Rata-rata Penyewaan', 'month': 'Bulan'},
-             color_discrete_sequence=["royalblue"])  # Semua warna biru
-
-# Tampilkan di Streamlit
+             color_discrete_sequence=["royalblue"])  
 st.subheader("Rata-rata Penyewaan Sepeda Berdasarkan Bulan")
 st.plotly_chart(fig)
 
